@@ -47,3 +47,7 @@ This module uses the `openapi-typescript` module to generate typescript data fro
 
 - Make the createRiotFetch function more flexible by also allowing a fetch function without baseURL functionality (for example the standard node fetch)
 - I guess this concepts can also be applied to other apis pretty easily. The createRiotFetch removes these flexibility.
+
+## This also exist
+
+- https://openapi-ts.dev/openapi-fetch/
