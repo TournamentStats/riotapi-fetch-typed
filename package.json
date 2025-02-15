@@ -1,12 +1,12 @@
 {
   "name": "riot-games-fetch-typed",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Module that enables typing of Requests to the Riot Games API with ease.",
   "main": "index.ts",
   "scripts": {
-    "generate-types": "openapi-typescript https://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.yml -o types/openapi.d.ts",
-    "build-no-gen": "tsup-node src/index.ts --dts",
+    "generate-types": "openapi-typescript https://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.yml -o src/types/openapi.d.ts",
+    "build-no-gen": "tsup-node src/index.ts --dts --format esm,cjs",
     "build": "pnpm generate-types && pnpm build-no-gen",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

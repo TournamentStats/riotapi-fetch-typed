@@ -1,4 +1,4 @@
-import type { paths, components } from 'types/openapi.d.ts'
+import type { paths, components } from './types/openapi'
 
 type RiotError = components['schemas']['Error']
 
