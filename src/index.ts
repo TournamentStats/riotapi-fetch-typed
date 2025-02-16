@@ -40,9 +40,9 @@ type GetResponseBody<Path extends Paths, Method extends AvailableMethods<Path>, 
 type GetRequestBody<Path extends Paths, Method extends AvailableMethods<Path>> =
 	paths[Path][Method] extends { requestBody: { content: { 'application/json': infer Body } } } ? Body : never
 
-// overwrite FetchOptions type to include body property
-type FetchOptions<F, Body> = F & {
-	body?: Body
+export interface CreateFetchOptions {
+	apiKey: string
+	baseUrl?: (region: Region | Platform | string) => string
 }
 
 // Checks if an error is a RiotError
@@ -50,18 +50,27 @@ export function isRiotError(error: unknown): error is RiotError {
 	return (error as RiotError).status !== undefined
 }
 
-// Creates a fetch function that automatically appends the api key to the headers
-// provides typing for the request and response bodies based on the passed request path
-// Path and Method are automatically inferred from parameters, ResponseCode defaults to 200
-// Function requires a fetch method that can work with a base url, for example ofetch https://github.com/unjs/ofetch
-// only really tested with ofetch
+
+/**
+ * Creates a fetch function that automatically appends the api key to the headers
+ * provides typing for the request and response bodies based on the passed request path
+ * Path and Method are automatically inferred from parameters, ResponseCode defaults to 200
+ * Function requires a fetch method that can work with a base url, for example ofetch https://github.com/unjs/ofetch
+ * only really tested with ofetch
+ *
+ * @param fetchMethod Fetch method, for example ofetch. This Function has to return a promise with the response body. For custom parameters wrap the fetch method and use the options parameter.
+ * @param createFetchOptions Object containing the api key and optional base url function
+ * @returns A function that can be called with a region, request path and optional options
+ */
 export function createRiotFetch<
-	O extends { headers?: HeadersInit, baseURL?: string, body?: object },
-	Fetch extends <T>(request: string, options?: O) => Promise<T>,
+	O extends Record<string, unknown> | undefined,
+	Fetch extends <T>(
+		request: string,
+		options?: Partial<O> & { headers?: HeadersInit, baseURL?: string, body?: object },
+	) => Promise<T>,
 >(
 	fetchMethod: Fetch,
-	apiKey: string,
-	baseUrl: (region: Region | Platform | string) => string = (region) => `https://${region}.api.riotgames.com/`,
+	createFetchOptions: CreateFetchOptions
 ) {
 	return async <
 		Path extends TemplatePaths,
@@ -70,20 +79,20 @@ export function createRiotFetch<
 	>(
 		region: Region | Platform | string,
 		request: Path,
-		options?: FetchOptions<O, GetRequestBody<ResolveTemplatePath<Path>, Method>>,
+		options: O & { headers?: HeadersInit, baseURL?: string } & { body?: GetRequestBody<ResolveTemplatePath<Path>, Method> },
 	): Promise<GetResponseBody<ResolveTemplatePath<Path>, Method, ResponseCode>> => {
 
-		options = options ?? {} as FetchOptions<O, GetRequestBody<ResolveTemplatePath<Path>, Method>>
-		const headers = new Headers(options.headers)
-		headers.append('X-Riot-Token', apiKey)
+		options = options ?? {}
+		const headers = new Headers(options?.headers)
+		headers.append('X-Riot-Token', createFetchOptions.apiKey)
 		options.headers = headers
 
 		return fetchMethod<GetResponseBody<ResolveTemplatePath<Path>, Method, ResponseCode>>(
 			request,
 			{
-				baseURL: baseUrl(region),
+				baseURL: createFetchOptions.baseUrl?.(region) ?? `https://${region}.api.riotgames.com/`,
 				...options,
-			}
+			},
 		)
 	}
 }
