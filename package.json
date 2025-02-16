@@ -1,7 +1,7 @@
 {
   "name": "riot-games-fetch-typed",
   "type": "module",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Module that enables typing of Requests to the Riot Games API with ease.",
   "main": "src/index.ts",
   "scripts": {

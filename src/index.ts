@@ -1,6 +1,6 @@
 import type { paths, components } from './types/openapi'
 
-type RiotError = components['schemas']['Error']
+export type RiotError = components['schemas']['Error']
 
 type _Region = 'americas' | 'asia' | 'europe' | 'esports'
 export type Region = _Region | Uppercase<_Region>
