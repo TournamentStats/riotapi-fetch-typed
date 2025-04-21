@@ -10,10 +10,10 @@ This module provides a utility function to create a fetch function. This uses a 
 import { createRiotFetch } from 'riot-games-fetch-typed'
 import { ofetch } from 'ofetch'
 
-const riotFetch = createRiotFetch(ofetch, 'Your Riot Games API Key')
+const riotFetch = createRiotFetch(ofetch, { apiKey: process.env.RIOT_API_KEY ?? '' })
 
-// account is fully typed! API endpoint supports autofill!
-const account = await riotFetch('europe', { apiKey: process.env.RIOT_API_KEY ?? '' })
+// account is fully typed! API endpoint supports autofill (kinda, not really. In theory it could be possible but vscode doesn't autocomplete template literals)!
+const account = await riotFetch('europe', `/riot/account/v1/accounts/by-puuid/${puuid}`)
 const { gameName, gameTag } = account
 
 const ids = await riotFetch(
