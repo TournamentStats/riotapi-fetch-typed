@@ -13,7 +13,7 @@ import { ofetch } from 'ofetch'
 const riotFetch = createRiotFetch(ofetch, 'Your Riot Games API Key')
 
 // account is fully typed! API endpoint supports autofill!
-const account = await riotFetch('europe', `/riot/account/v1/accounts/by-puuid/${puuid}`)
+const account = await riotFetch('europe', { apiKey: process.env.RIOT_API_KEY ?? '' })
 const { gameName, gameTag } = account
 
 const ids = await riotFetch(
