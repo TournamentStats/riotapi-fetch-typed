@@ -77,9 +77,12 @@ export function createRiotFetch<
 		Method extends AvailableMethods<ResolveTemplatePath<Path>> = 'get',
 		ResponseCode extends number = 200,
 	>(
-		region: Region | Platform | string,
+
 		request: Path,
-		options: O & { headers?: HeadersInit, baseURL?: string } & { body?: GetRequestBody<ResolveTemplatePath<Path>, Method> },
+		options: O & {
+			region: Region | Platform | string,
+			headers?: HeadersInit, baseURL?: string
+		} & { body?: GetRequestBody<ResolveTemplatePath<Path>, Method> },
 	): Promise<GetResponseBody<ResolveTemplatePath<Path>, Method, ResponseCode>> => {
 
 		options = options ?? {}
@@ -90,7 +93,7 @@ export function createRiotFetch<
 		return fetchMethod<GetResponseBody<ResolveTemplatePath<Path>, Method, ResponseCode>>(
 			request,
 			{
-				baseURL: createFetchOptions.baseUrl?.(region) ?? `https://${region}.api.riotgames.com/`,
+				baseURL: createFetchOptions.baseUrl?.(options.region) ?? `https://${options.region}.api.riotgames.com/`,
 				...options,
 			},
 		)
