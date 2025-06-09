@@ -84,6 +84,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/riot/account/v1/region/by-game/{game}/by-puuid/{puuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active region (lol and tft)
+         * @description Get active region (lol and tft)
+         */
+        get: operations["account-v1.getActiveRegion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/lol/champion-mastery/v4/champion-masteries/by-puuid/{encryptedPUUID}": {
         parameters: {
             query?: never;
@@ -206,28 +226,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/lol/clash/v1/players/by-summoner/{summonerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get players by summoner ID.
-         * @description Get players by summoner ID.
-         *     ## Implementation Notes
-         *     This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
-         */
-        get: operations["clash-v1.getPlayersBySummoner"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/lol/clash/v1/teams/{teamId}": {
         parameters: {
             query?: never;
@@ -340,6 +338,26 @@ export interface paths {
          * @description Get the challenger league for given queue.
          */
         get: operations["league-v4.getChallengerLeague"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/lol/league/v4/entries/by-puuid/{encryptedPUUID}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get league entries in all queues for a given puuid
+         * @description Get league entries in all queues for a given puuid
+         */
+        get: operations["league-v4.getLeagueEntriesByPUUID"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1004,6 +1022,26 @@ export interface paths {
          * @description Get a summoner by summoner ID.
          */
         get: operations["summoner-v4.getBySummonerId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tft/league/v1/by-puuid/{puuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get league entries in all queues for a given puuid
+         * @description Get league entries in all queues for a given puuid
+         */
+        get: operations["tft-league-v1.getLeagueEntriesByPUUID"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1742,11 +1780,24 @@ export interface components {
         };
         /** AccountDto */
         "account-v1.AccountDto": {
+            /** @description Encrypted PUUID. Exact length of 78 characters. */
             puuid: string;
             /** @description This field may be excluded from the response if the account doesn't have a gameName. */
             gameName?: string;
             /** @description This field may be excluded from the response if the account doesn't have a tagLine. */
             tagLine?: string;
+        };
+        /**
+         * AccountRegionDTO
+         * @description Account region
+         */
+        "account-v1.AccountRegionDTO": {
+            /** @description Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted) */
+            puuid: string;
+            /** @description Game to lookup active region */
+            game: string;
+            /** @description Player active region */
+            region: string;
         };
         /** ActiveShardDto */
         "account-v1.ActiveShardDto": {
@@ -1905,6 +1956,8 @@ export interface components {
             leagueId: string;
             /** @description Player's summonerId (Encrypted) */
             summonerId: string;
+            /** @description Player's encrypted puuid. */
+            puuid: string;
             queueType: string;
             tier: string;
             /** @description The player's division within a tier. */
@@ -1967,6 +2020,8 @@ export interface components {
             losses: number;
             /** @description Player's encrypted summonerId. */
             summonerId: string;
+            /** @description Player's encrypted puuid. */
+            puuid: string;
         };
         /** MiniSeriesDTO */
         "league-v4.MiniSeriesDTO": {
@@ -1983,6 +2038,8 @@ export interface components {
             leagueId?: string;
             /** @description Player's encrypted summonerId. */
             summonerId: string;
+            /** @description Player's encrypted puuid. */
+            puuid: string;
             queueType: string;
             tier?: string;
             /** @description The player's division within a tier. */
@@ -2387,7 +2444,7 @@ export interface components {
             /** Format: int32 */
             baronKills: number;
             /** Format: int32 */
-            bountyLevel: number;
+            bountyLevel?: number;
             /** Format: int32 */
             champExperience: number;
             /** Format: int32 */
@@ -2527,29 +2584,29 @@ export interface components {
             onMyWayPings?: number;
             /** Format: int32 */
             participantId: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore0?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore1?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore2?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore3?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore4?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore5?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore6?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore7?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore8?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore9?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore10?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore11?: number;
             /** Format: int32 */
             pentaKills: number;
@@ -2709,9 +2766,9 @@ export interface components {
         "match-v5.ChallengesDto": {
             /** Format: int32 */
             "12AssistStreakCount"?: number;
-            /** Format: double */
+            /** Format: int32 */
             baronBuffGoldAdvantageOverThreshold?: number;
-            /** Format: double */
+            /** Format: float */
             controlWardTimeCoverageInRiverOrEnemyHalf?: number;
             /** Format: double */
             earliestBaron?: number;
@@ -2721,49 +2778,67 @@ export interface components {
             earliestElderDragon?: number;
             /** Format: double */
             earlyLaningPhaseGoldExpAdvantage?: number;
-            /** Format: double */
-            fasterSupportQuestCompletion?: number;
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            fasterSupportQuestCompletion?: 0 | 1;
             /** Format: double */
             fastestLegendary?: number;
-            /** Format: double */
-            hadAfkTeammate?: number;
-            /** Format: double */
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            hadAfkTeammate?: 0 | 1;
+            /** Format: int32 */
             highestChampionDamage?: number;
-            /** Format: double */
-            highestCrowdControlScore?: number;
-            /** Format: double */
-            highestWardKills?: number;
-            /** Format: double */
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            highestCrowdControlScore?: 0 | 1;
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            highestWardKills?: 0 | 1;
+            /** Format: int32 */
             junglerKillsEarlyJungle?: number;
-            /** Format: double */
+            /** Format: int32 */
             killsOnLanersEarlyJungleAsJungler?: number;
-            /** Format: double */
-            laningPhaseGoldExpAdvantage?: number;
-            /** Format: double */
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            laningPhaseGoldExpAdvantage?: 0 | 1;
+            /** Format: int32 */
             legendaryCount?: number;
-            /** Format: double */
+            /** Format: float */
             maxCsAdvantageOnLaneOpponent?: number;
-            /** Format: double */
+            /** Format: int32 */
             maxLevelLeadLaneOpponent?: number;
-            /** Format: double */
+            /** Format: int32 */
             mostWardsDestroyedOneSweeper?: number;
-            /** Format: double */
+            /** Format: int32 */
             mythicItemUsed?: number;
-            /** Format: double */
-            playedChampSelectPosition?: number;
-            /** Format: double */
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            playedChampSelectPosition?: 0 | 1;
+            /** Format: int32 */
             soloTurretsLategame?: number;
-            /** Format: double */
+            /** Format: int32 */
             takedownsFirst25Minutes?: number;
-            /** Format: double */
+            /** Format: int32 */
             teleportTakedowns?: number;
             /** Format: double */
             thirdInhibitorDestroyedTime?: number;
-            /** Format: double */
+            /** Format: int32 */
             threeWardsOneSweeperCount?: number;
-            /** Format: double */
+            /** Format: float */
             visionScoreAdvantageLaneOpponent?: number;
-            /** Format: double */
+            /** Format: int32 */
             InfernalScalePickup?: number;
             /** Format: int32 */
             fistBumpParticipation?: number;
@@ -2773,7 +2848,7 @@ export interface components {
             abilityUses?: number;
             /** Format: int32 */
             acesBefore15Minutes?: number;
-            /** Format: double */
+            /** Format: float */
             alliedJungleMonsterKills?: number;
             /** Format: int32 */
             baronTakedowns?: number;
@@ -2787,9 +2862,9 @@ export interface components {
             completeSupportQuestInTime?: number;
             /** Format: int32 */
             controlWardsPlaced?: number;
-            /** Format: double */
+            /** Format: float */
             damagePerMinute?: number;
-            /** Format: double */
+            /** Format: float */
             damageTakenOnTeamPercentage?: number;
             /** Format: int32 */
             dancedWithRiftHerald?: number;
@@ -2810,7 +2885,7 @@ export interface components {
             elderDragonMultikills?: number;
             /** Format: int32 */
             enemyChampionImmobilizations?: number;
-            /** Format: double */
+            /** Format: float */
             enemyJungleMonsterKills?: number;
             /** Format: int32 */
             epicMonsterKillsNearEnemyJungler?: number;
@@ -2828,11 +2903,11 @@ export interface components {
             flawlessAces?: number;
             /** Format: int32 */
             fullTeamTakedown?: number;
-            /** Format: double */
+            /** Format: float */
             gameLength?: number;
             /** Format: int32 */
             getTakedownsInAllLanesEarlyJungleAsLaner?: number;
-            /** Format: double */
+            /** Format: float */
             goldPerMinute?: number;
             /** Format: int32 */
             hadOpenNexus?: number;
@@ -2842,11 +2917,11 @@ export interface components {
             initialBuffCount?: number;
             /** Format: int32 */
             initialCrabCount?: number;
-            /** Format: double */
+            /** Format: float */
             jungleCsBefore10Minutes?: number;
             /** Format: int32 */
             junglerTakedownsNearDamagedEpicMonster?: number;
-            /** Format: double */
+            /** Format: float */
             kda?: number;
             /** Format: int32 */
             killAfterHiddenWithAlly?: number;
@@ -2854,7 +2929,7 @@ export interface components {
             killedChampTookFullTeamDamageSurvived?: number;
             /** Format: int32 */
             killingSprees?: number;
-            /** Format: double */
+            /** Format: float */
             killParticipation?: number;
             /** Format: int32 */
             killsNearEnemyTurret?: number;
@@ -2880,7 +2955,7 @@ export interface components {
             maxKillDeficit?: number;
             /** Format: int32 */
             mejaisFullStackInTime?: number;
-            /** Format: double */
+            /** Format: float */
             moreEnemyJungleThanOpponent?: number;
             /**
              * Format: int32
@@ -2941,7 +3016,7 @@ export interface components {
             SWARM_Have3Passives?: number;
             /** Format: int32 */
             SWARM_KillEnemy?: number;
-            /** Format: int32 */
+            /** Format: float */
             SWARM_PickupGold?: number;
             /** Format: int32 */
             SWARM_ReachLevel50?: number;
@@ -2973,7 +3048,7 @@ export interface components {
             takedownsInEnemyFountain?: number;
             /** Format: int32 */
             teamBaronKills?: number;
-            /** Format: double */
+            /** Format: float */
             teamDamagePercentage?: number;
             /** Format: int32 */
             teamElderDragonKills?: number;
@@ -2996,7 +3071,7 @@ export interface components {
             twoWardsOneSweeperCount?: number;
             /** Format: int32 */
             unseenRecalls?: number;
-            /** Format: double */
+            /** Format: float */
             visionScorePerMinute?: number;
             /** Format: int32 */
             wardsGuarded?: number;
@@ -3012,29 +3087,29 @@ export interface components {
          * @description Missions DTO
          */
         "match-v5.MissionsDto": {
-            /** Format: int32 */
+            /** Format: float */
             playerScore0?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore1?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore2?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore3?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore4?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore5?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore6?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore7?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore8?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore9?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore10?: number;
-            /** Format: int32 */
+            /** Format: float */
             playerScore11?: number;
         };
         /** PerksDto */
@@ -3076,6 +3151,7 @@ export interface components {
             /** Format: int32 */
             teamId: number;
             win: boolean;
+            feats?: components["schemas"]["match-v5.FeatsDto"];
         };
         /** BanDto */
         "match-v5.BanDto": {
@@ -3202,6 +3278,10 @@ export interface components {
             shutdownBounty?: number;
             /** Format: int64 */
             actualStartTime?: number;
+            /** Format: int32 */
+            featType?: number;
+            /** Format: int32 */
+            featValue?: number;
         };
         /** ParticipantFramesDto */
         "match-v5.ParticipantFramesDto": {
@@ -3319,6 +3399,12 @@ export interface components {
             /** Format: int32 */
             y: number;
         };
+        /** FeatsDto */
+        "match-v5.FeatsDto": {
+            EPIC_MONSTER_KILL?: components["schemas"]["match-v5.FeatDto"];
+            FIRST_BLOOD?: components["schemas"]["match-v5.FeatDto"];
+            FIRST_TURRET?: components["schemas"]["match-v5.FeatDto"];
+        };
         /** MatchTimelineVictimDamage */
         "match-v5.MatchTimelineVictimDamage": {
             basic: boolean;
@@ -3335,6 +3421,11 @@ export interface components {
             /** Format: int32 */
             trueDamage: number;
             type: string;
+        };
+        /** FeatDto */
+        "match-v5.FeatDto": {
+            /** Format: int32 */
+            featState?: number;
         };
         /** CurrentGameInfo */
         "spectator-tft-v5.CurrentGameInfo": {
@@ -3770,7 +3861,7 @@ export interface components {
             profileIconId: number;
             /**
              * Format: int64
-             * @description Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change
+             * @description Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change.
              */
             revisionDate: number;
             /** @description Encrypted summoner ID. Max length 63 characters. */
@@ -3782,47 +3873,6 @@ export interface components {
              * @description Summoner level associated with the summoner.
              */
             summonerLevel: number;
-        };
-        /** LeagueListDTO */
-        "tft-league-v1.LeagueListDTO": {
-            leagueId?: string;
-            entries: components["schemas"]["tft-league-v1.LeagueItemDTO"][];
-            tier: string;
-            name?: string;
-            queue?: string;
-        };
-        /** LeagueItemDTO */
-        "tft-league-v1.LeagueItemDTO": {
-            freshBlood: boolean;
-            /**
-             * Format: int32
-             * @description First placement.
-             */
-            wins: number;
-            miniSeries?: components["schemas"]["tft-league-v1.MiniSeriesDTO"];
-            inactive: boolean;
-            veteran: boolean;
-            hotStreak: boolean;
-            rank: string;
-            /** Format: int32 */
-            leaguePoints: number;
-            /**
-             * Format: int32
-             * @description Second through eighth placement.
-             */
-            losses: number;
-            /** @description Player's encrypted summonerId. */
-            summonerId: string;
-        };
-        /** MiniSeriesDTO */
-        "tft-league-v1.MiniSeriesDTO": {
-            /** Format: int32 */
-            losses: number;
-            progress: string;
-            /** Format: int32 */
-            target: number;
-            /** Format: int32 */
-            wins: number;
         };
         /** LeagueEntryDTO */
         "tft-league-v1.LeagueEntryDTO": {
@@ -3874,6 +3924,49 @@ export interface components {
             /** @description Not included for the RANKED_TFT_TURBO queueType. */
             miniSeries?: components["schemas"]["tft-league-v1.MiniSeriesDTO"];
         };
+        /** MiniSeriesDTO */
+        "tft-league-v1.MiniSeriesDTO": {
+            /** Format: int32 */
+            losses: number;
+            progress: string;
+            /** Format: int32 */
+            target: number;
+            /** Format: int32 */
+            wins: number;
+        };
+        /** LeagueListDTO */
+        "tft-league-v1.LeagueListDTO": {
+            leagueId?: string;
+            entries: components["schemas"]["tft-league-v1.LeagueItemDTO"][];
+            tier: string;
+            name?: string;
+            queue?: string;
+        };
+        /** LeagueItemDTO */
+        "tft-league-v1.LeagueItemDTO": {
+            freshBlood: boolean;
+            /**
+             * Format: int32
+             * @description First placement.
+             */
+            wins: number;
+            miniSeries?: components["schemas"]["tft-league-v1.MiniSeriesDTO"];
+            inactive: boolean;
+            veteran: boolean;
+            hotStreak: boolean;
+            rank: string;
+            /** Format: int32 */
+            leaguePoints: number;
+            /**
+             * Format: int32
+             * @description Second through eighth placement.
+             */
+            losses: number;
+            /** @description Player's encrypted summonerId. */
+            summonerId: string;
+            /** @description Player's encrypted puuid. */
+            puuid: string;
+        };
         /** TopRatedLadderEntryDto */
         "tft-league-v1.TopRatedLadderEntryDto": {
             summonerId: string;
@@ -3910,6 +4003,11 @@ export interface components {
         };
         /** InfoDto */
         "tft-match-v1.InfoDto": {
+            endOfGameResult?: string;
+            /** Format: int64 */
+            gameCreation?: number;
+            /** Format: int64 */
+            gameId?: number;
             /**
              * Format: int64
              * @description Unix timestamp.
@@ -3920,10 +4018,12 @@ export interface components {
              * @description Game length in seconds.
              */
             game_length: number;
-            /** @description Game variation key. Game variations documented in TFT static data. */
-            game_variation?: string;
             /** @description Game client version. */
             game_version: string;
+            /** @description Game variation key. Game variations documented in TFT static data. */
+            game_variation?: string;
+            /** Format: int64 */
+            mapId?: number;
             participants: components["schemas"]["tft-match-v1.ParticipantDto"][];
             /**
              * Format: int32
@@ -3932,23 +4032,16 @@ export interface components {
             queue_id: number;
             /**
              * Format: int32
-             * @description Teamfight Tactics set number.
-             */
-            tft_set_number: number;
-            tft_game_type?: string;
-            tft_set_core_name?: string;
-            endOfGameResult?: string;
-            /** Format: int64 */
-            gameCreation?: number;
-            /** Format: int64 */
-            gameId?: number;
-            /** Format: int64 */
-            mapId?: number;
-            /**
-             * Format: int32
              * @description Please refer to the League of Legends documentation.
              */
             queueId?: number;
+            tft_game_type?: string;
+            tft_set_core_name?: string;
+            /**
+             * Format: int32
+             * @description Teamfight Tactics set number.
+             */
+            tft_set_number: number;
         };
         /** ParticipantDto */
         "tft-match-v1.ParticipantDto": {
@@ -3996,14 +4089,26 @@ export interface components {
             traits: components["schemas"]["tft-match-v1.TraitDto"][];
             /** @description A list of active units for the participant. */
             units: components["schemas"]["tft-match-v1.UnitDto"][];
+            win?: boolean;
             augments?: string[];
             /** Format: int32 */
             partner_group_id?: number;
             missions?: components["schemas"]["tft-match-v1.ParticipantMissionsDto"];
-            win?: boolean;
             skill_tree?: {
                 [key: string]: number;
             };
+            /** Format: int32 */
+            pve_score?: number;
+            pve_wonrun?: boolean;
+        };
+        /** CompanionDto */
+        "tft-match-v1.CompanionDto": {
+            content_ID: string;
+            /** Format: int32 */
+            item_ID: number;
+            /** Format: int32 */
+            skin_ID: number;
+            species: string;
         };
         /** TraitDto */
         "tft-match-v1.TraitDto": {
@@ -4036,6 +4141,7 @@ export interface components {
             items?: number[];
             /** @description This field was introduced in patch 9.22 with data_version 2. */
             character_id: string;
+            itemNames?: string[];
             /** @description If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response. */
             chosen?: string;
             /** @description Unit name. This field is often left blank. */
@@ -4050,16 +4156,6 @@ export interface components {
              * @description Unit tier.
              */
             tier: number;
-            itemNames?: string[];
-        };
-        /** CompanionDto */
-        "tft-match-v1.CompanionDto": {
-            /** Format: int32 */
-            item_ID?: number;
-            /** Format: int32 */
-            skin_ID: number;
-            content_ID: string;
-            species: string;
         };
         /** ParticipantMissionsDto */
         "tft-match-v1.ParticipantMissionsDto": {
@@ -4212,8 +4308,12 @@ export interface components {
          * @description represents a summoner
          */
         "tft-summoner-v1.SummonerDTO": {
+            /** @description Encrypted summoner ID. Max length 63 characters. */
+            id: string;
             /** @description Encrypted account ID. Max length 56 characters. */
             accountId: string;
+            /** @description Encrypted PUUID. Exact length of 78 characters. */
+            puuid: string;
             /**
              * Format: int32
              * @description ID of the summoner icon associated with the summoner.
@@ -4221,13 +4321,9 @@ export interface components {
             profileIconId: number;
             /**
              * Format: int64
-             * @description Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.
+             * @description Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change.
              */
             revisionDate: number;
-            /** @description Encrypted summoner ID. Max length 63 characters. */
-            id: string;
-            /** @description Encrypted PUUID. Exact length of 78 characters. */
-            puuid: string;
             /**
              * Format: int64
              * @description Summoner level associated with the summoner.
@@ -4270,8 +4366,6 @@ export interface components {
         "tournament-stub-v5.TournamentCodeV5DTO": {
             /** @description The tournament code. */
             code: string;
-            /** @description The spectator mode for the tournament code game. */
-            spectators: string;
             /** @description The lobby name for the tournament code game. */
             lobbyName: string;
             /** @description The metadata for tournament code. */
@@ -4379,38 +4473,23 @@ export interface components {
         };
         /** TournamentCodeV5DTO */
         "tournament-v5.TournamentCodeV5DTO": {
-            /** @description The tournament code. */
-            code: string;
-            /** @description The spectator mode for the tournament code game. */
-            spectators: string;
-            /** @description The lobby name for the tournament code game. */
-            lobbyName: string;
-            /** @description The metadata for tournament code. */
-            metaData: string;
-            /** @description The password for the tournament code game. */
-            password: string;
-            /**
-             * Format: int32
-             * @description The team size for the tournament code game.
-             */
-            teamSize: number;
-            /**
-             * Format: int32
-             * @description The provider's ID.
-             */
-            providerId: number;
-            /** @description The pick mode for tournament code game. */
-            pickType: string;
-            /**
-             * Format: int32
-             * @description The tournament's ID.
-             */
-            tournamentId: number;
             /**
              * Format: int32
              * @description The tournament code's ID.
              */
             id: number;
+            /**
+             * Format: int32
+             * @description The provider's ID.
+             */
+            providerId: number;
+            /**
+             * Format: int32
+             * @description The tournament's ID.
+             */
+            tournamentId: number;
+            /** @description The tournament code. */
+            code: string;
             /**
              * @description The tournament code's region.
              *                  (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR,  PH,  SG,  TH,  TW,  VN)
@@ -4419,6 +4498,21 @@ export interface components {
             region: "BR" | "EUNE" | "EUW" | "JP" | "LAN" | "LAS" | "NA" | "OCE" | "PBE" | "RU" | "TR" | "KR" | "PH" | "SG" | "TH" | "TW" | "VN";
             /** @description The game map for the tournament code game */
             map: string;
+            /**
+             * Format: int32
+             * @description The team size for the tournament code game.
+             */
+            teamSize: number;
+            /** @description The spectator mode for the tournament code game. */
+            spectators: string;
+            /** @description The pick mode for tournament code game. */
+            pickType: string;
+            /** @description The lobby name for the tournament code game. */
+            lobbyName: string;
+            /** @description The password for the tournament code game. */
+            password: string;
+            /** @description The metadata for tournament code. */
+            metaData: string;
             /** @description The puuids of the participants (Encrypted) */
             participants: string[];
         };
@@ -4447,6 +4541,8 @@ export interface components {
         };
         /** TournamentGamesV5 */
         "tournament-v5.TournamentGamesV5": {
+            /** Format: int64 */
+            startTime: number;
             winningTeam: components["schemas"]["tournament-v5.TournamentTeamV5"][];
             losingTeam: components["schemas"]["tournament-v5.TournamentTeamV5"][];
             /** @description Tournament Code */
@@ -4510,15 +4606,15 @@ export interface components {
             matchInfo: components["schemas"]["val-console-match-v1.MatchInfoDto"];
             players: components["schemas"]["val-console-match-v1.PlayerDto"][];
             coaches: components["schemas"]["val-console-match-v1.CoachDto"][];
-            teams: components["schemas"]["val-console-match-v1.TeamDto"][];
-            roundResults: components["schemas"]["val-console-match-v1.RoundResultDto"][];
+            teams?: components["schemas"]["val-console-match-v1.TeamDto"][];
+            roundResults?: components["schemas"]["val-console-match-v1.RoundResultDto"][];
         };
         /** MatchInfoDto */
         "val-console-match-v1.MatchInfoDto": {
             matchId: string;
             mapId: string;
             /** Format: int32 */
-            gameLengthMillis: number;
+            gameLengthMillis?: number;
             /** Format: int64 */
             gameStartMillis: number;
             provisioningFlowId: string;
@@ -4536,8 +4632,8 @@ export interface components {
             tagLine: string;
             teamId: string;
             partyId: string;
-            characterId: string;
-            stats: components["schemas"]["val-console-match-v1.PlayerStatsDto"];
+            characterId?: string;
+            stats?: components["schemas"]["val-console-match-v1.PlayerStatsDto"];
             /** Format: int32 */
             competitiveTier: number;
             playerCard: string;
@@ -4557,7 +4653,7 @@ export interface components {
             assists: number;
             /** Format: int32 */
             playtimeMillis: number;
-            abilityCasts: components["schemas"]["val-console-match-v1.AbilityCastsDto"];
+            abilityCasts?: components["schemas"]["val-console-match-v1.AbilityCastsDto"];
         };
         /** AbilityCastsDto */
         "val-console-match-v1.AbilityCastsDto": {
@@ -4598,17 +4694,17 @@ export interface components {
             roundCeremony: string;
             winningTeam: string;
             /** @description PUUID of player */
-            bombPlanter: string;
+            bombPlanter?: string;
             /** @description PUUID of player */
-            bombDefuser: string;
+            bombDefuser?: string;
             /** Format: int32 */
             plantRoundTime: number;
-            plantPlayerLocations: components["schemas"]["val-console-match-v1.PlayerLocationsDto"][];
+            plantPlayerLocations?: components["schemas"]["val-console-match-v1.PlayerLocationsDto"][];
             plantLocation: components["schemas"]["val-console-match-v1.LocationDto"];
             plantSite: string;
             /** Format: int32 */
             defuseRoundTime: number;
-            defusePlayerLocations: components["schemas"]["val-console-match-v1.PlayerLocationsDto"][];
+            defusePlayerLocations?: components["schemas"]["val-console-match-v1.PlayerLocationsDto"][];
             defuseLocation: components["schemas"]["val-console-match-v1.LocationDto"];
             playerStats: components["schemas"]["val-console-match-v1.PlayerRoundStatsDto"][];
             roundResultCode: string;
@@ -4685,10 +4781,10 @@ export interface components {
         };
         /** AbilityDto */
         "val-console-match-v1.AbilityDto": {
-            grenadeEffects: string;
-            ability1Effects: string;
-            ability2Effects: string;
-            ultimateEffects: string;
+            grenadeEffects?: string;
+            ability1Effects?: string;
+            ability2Effects?: string;
+            ultimateEffects?: string;
         };
         /** MatchlistDto */
         "val-console-match-v1.MatchlistDto": {
@@ -4725,11 +4821,11 @@ export interface components {
         /** PlayerDto */
         "val-console-ranked-v1.PlayerDto": {
             /** @description This field may be omitted if the player has been anonymized. */
-            puuid: string;
+            puuid?: string;
             /** @description This field may be omitted if the player has been anonymized. */
-            gameName: string;
+            gameName?: string;
             /** @description This field may be omitted if the player has been anonymized. */
-            tagLine: string;
+            tagLine?: string;
             /** Format: int64 */
             leaderboardRank: number;
             /** Format: int64 */
@@ -4804,15 +4900,17 @@ export interface components {
             matchInfo: components["schemas"]["val-match-v1.MatchInfoDto"];
             players: components["schemas"]["val-match-v1.PlayerDto"][];
             coaches: components["schemas"]["val-match-v1.CoachDto"][];
-            teams: components["schemas"]["val-match-v1.TeamDto"][];
-            roundResults: components["schemas"]["val-match-v1.RoundResultDto"][];
+            teams?: components["schemas"]["val-match-v1.TeamDto"][];
+            roundResults?: components["schemas"]["val-match-v1.RoundResultDto"][];
         };
         /** MatchInfoDto */
         "val-match-v1.MatchInfoDto": {
             matchId: string;
             mapId: string;
+            gameVersion: string;
             /** Format: int32 */
-            gameLengthMillis: number;
+            gameLengthMillis?: number;
+            region: string;
             /** Format: int64 */
             gameStartMillis: number;
             provisioningFlowId: string;
@@ -4822,8 +4920,6 @@ export interface components {
             gameMode: string;
             isRanked: boolean;
             seasonId: string;
-            gameVersion: string;
-            region: string;
             premierMatchInfo: Record<string, never>;
         };
         /** PlayerDto */
@@ -4833,13 +4929,13 @@ export interface components {
             tagLine: string;
             teamId: string;
             partyId: string;
-            characterId: string;
-            stats: components["schemas"]["val-match-v1.PlayerStatsDto"];
+            characterId?: string;
+            stats?: components["schemas"]["val-match-v1.PlayerStatsDto"];
             /** Format: int32 */
             competitiveTier: number;
+            isObserver: boolean;
             playerCard: string;
             playerTitle: string;
-            isObserver: boolean;
             /** Format: int32 */
             accountLevel: number;
         };
@@ -4897,6 +4993,7 @@ export interface components {
             roundResult: string;
             roundCeremony: string;
             winningTeam: string;
+            winningTeamRole: string;
             /** @description PUUID of player */
             bombPlanter?: string;
             /** @description PUUID of player */
@@ -4912,7 +5009,6 @@ export interface components {
             defuseLocation: components["schemas"]["val-match-v1.LocationDto"];
             playerStats: components["schemas"]["val-match-v1.PlayerRoundStatsDto"][];
             roundResultCode: string;
-            winningTeamRole: string;
         };
         /** PlayerLocationsDto */
         "val-match-v1.PlayerLocationsDto": {
@@ -5434,6 +5530,106 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["account-v1.ActiveShardDto"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Data not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Method not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unsupported media type */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad gateway */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Gateway timeout */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "account-v1.getActiveRegion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                puuid: string;
+                game: "lol" | "tft";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["account-v1.AccountRegionDTO"];
                 };
             };
             /** @description Bad request */
@@ -6112,105 +6308,6 @@ export interface operations {
             };
         };
     };
-    "clash-v1.getPlayersBySummoner": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                summonerId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["clash-v1.PlayerDto"][];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     "clash-v1.getTeamById": {
         parameters: {
             query?: never;
@@ -6728,6 +6825,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["league-v4.LeagueListDTO"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Data not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Method not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unsupported media type */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad gateway */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Gateway timeout */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "league-v4.getLeagueEntriesByPUUID": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encryptedPUUID: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["league-v4.LeagueEntryDTO"][];
                 };
             };
             /** @description Bad request */
@@ -8037,7 +8233,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["lol-rso-match-v1.MatchDto"];
+                    "application/json": components["schemas"]["match-v5.MatchDto"];
                 };
             };
             /** @description Bad request */
@@ -8136,7 +8332,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["lol-rso-match-v1.TimelineDto"];
+                    "application/json": components["schemas"]["match-v5.TimelineDto"];
                 };
             };
             /** @description Bad request */
@@ -10121,6 +10317,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["summoner-v4.SummonerDTO"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Data not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Method not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unsupported media type */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad gateway */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Gateway timeout */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "tft-league-v1.getLeagueEntriesByPUUID": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                puuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["tft-league-v1.LeagueEntryDTO"][];
                 };
             };
             /** @description Bad request */
