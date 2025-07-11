@@ -366,26 +366,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/lol/league/v4/entries/by-summoner/{encryptedSummonerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get league entries in all queues for a given summoner ID.
-         * @description Get league entries in all queues for a given summoner ID.
-         */
-        get: operations["league-v4.getLeagueEntriesForSummoner"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/lol/league/v4/entries/{queue}/{tier}/{division}": {
         parameters: {
             query?: never;
@@ -950,26 +930,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/lol/summoner/v4/summoners/by-account/{encryptedAccountId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get a summoner by account ID.
-         * @description Get a summoner by account ID.
-         */
-        get: operations["summoner-v4.getByAccountId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}": {
         parameters: {
             query?: never;
@@ -1010,26 +970,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/lol/summoner/v4/summoners/{encryptedSummonerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get a summoner by summoner ID.
-         * @description Get a summoner by summoner ID.
-         */
-        get: operations["summoner-v4.getBySummonerId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/tft/league/v1/by-puuid/{puuid}": {
         parameters: {
             query?: never;
@@ -1062,26 +1002,6 @@ export interface paths {
          * @description Get the challenger league.
          */
         get: operations["tft-league-v1.getChallengerLeague"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/tft/league/v1/entries/by-summoner/{summonerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get league entries for a given summoner ID.
-         * @description Get league entries for a given summoner ID.
-         */
-        get: operations["tft-league-v1.getLeagueEntriesForSummoner"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1250,26 +1170,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tft/summoner/v1/summoners/by-account/{encryptedAccountId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get a summoner by account ID.
-         * @description Get a summoner by account ID.
-         */
-        get: operations["tft-summoner-v1.getByAccountId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}": {
         parameters: {
             query?: never;
@@ -1302,26 +1202,6 @@ export interface paths {
          * @description Get a summoner by access token.
          */
         get: operations["tft-summoner-v1.getByAccessToken"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/tft/summoner/v1/summoners/{encryptedSummonerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get a summoner by summoner ID.
-         * @description Get a summoner by summoner ID.
-         */
-        get: operations["tft-summoner-v1.getBySummonerId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1900,7 +1780,6 @@ export interface components {
         };
         /** PlayerDto */
         "clash-v1.PlayerDto": {
-            summonerId: string;
             puuid: string;
             teamId?: string;
             /**
@@ -1955,7 +1834,7 @@ export interface components {
         "league-exp-v4.LeagueEntryDTO": {
             leagueId: string;
             /** @description Player's summonerId (Encrypted) */
-            summonerId: string;
+            summonerId?: string;
             /** @description Player's encrypted puuid. */
             puuid: string;
             queueType: string;
@@ -2018,10 +1897,10 @@ export interface components {
              * @description Losing team on Summoners Rift.
              */
             losses: number;
-            /** @description Player's encrypted summonerId. */
-            summonerId: string;
             /** @description Player's encrypted puuid. */
             puuid: string;
+            /** @description Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead. */
+            summonerId?: string;
         };
         /** MiniSeriesDTO */
         "league-v4.MiniSeriesDTO": {
@@ -2036,8 +1915,6 @@ export interface components {
         /** LeagueEntryDTO */
         "league-v4.LeagueEntryDTO": {
             leagueId?: string;
-            /** @description Player's encrypted summonerId. */
-            summonerId: string;
             /** @description Player's encrypted puuid. */
             puuid: string;
             queueType: string;
@@ -2061,6 +1938,8 @@ export interface components {
             freshBlood: boolean;
             inactive: boolean;
             miniSeries?: components["schemas"]["league-v4.MiniSeriesDTO"];
+            /** @description Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead. */
+            summonerId?: string;
         };
         /** ChallengeConfigInfoDto */
         "lol-challenges-v1.ChallengeConfigInfoDto": {
@@ -2426,6 +2305,7 @@ export interface components {
             teams: components["schemas"]["match-v5.TeamDto"][];
             /** @description Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021. */
             tournamentCode?: string;
+            gameModeMutators?: string[];
         };
         /** ParticipantDto */
         "match-v5.ParticipantDto": {
@@ -2758,6 +2638,8 @@ export interface components {
              * @description https://github.com/RiotGames/developer-relations/issues/814
              */
             retreatPings?: number;
+            /** Format: int32 */
+            championSkinId?: number;
         };
         /**
          * ChallengesDto
@@ -3509,8 +3391,6 @@ export interface components {
              * @description The team ID of this participant, indicating the participant's team
              */
             teamId: number;
-            /** @description The encrypted summoner ID of this participant */
-            summonerId: string;
             /** @description The encrypted puuid of this participant */
             puuid?: string;
             /**
@@ -3614,8 +3494,6 @@ export interface components {
              * @description The ID of the profile icon used by this participant
              */
             profileIconId: number;
-            /** @description Encrypted summoner ID of this participant */
-            summonerId?: string;
             /** @description Encrypted puuid of this participant */
             puuid?: string;
             /**
@@ -3719,8 +3597,6 @@ export interface components {
              * @description The team ID of this participant, indicating the participant's team
              */
             teamId: number;
-            /** @description The encrypted summoner ID of this participant */
-            summonerId: string;
             /** @description The encrypted puuid of this participant */
             puuid?: string;
             /**
@@ -3826,8 +3702,6 @@ export interface components {
              * @description The ID of the profile icon used by this participant
              */
             profileIconId: number;
-            /** @description Encrypted summoner ID of this participant */
-            summonerId?: string;
             /** @description Encrypted puuid of this participant */
             puuid?: string;
             /**
@@ -3852,8 +3726,6 @@ export interface components {
          * @description represents a summoner
          */
         "summoner-v4.SummonerDTO": {
-            /** @description Encrypted account ID. Max length 56 characters. */
-            accountId: string;
             /**
              * Format: int32
              * @description ID of the summoner icon associated with the summoner.
@@ -3864,8 +3736,6 @@ export interface components {
              * @description Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change.
              */
             revisionDate: number;
-            /** @description Encrypted summoner ID. Max length 63 characters. */
-            id: string;
             /** @description Encrypted PUUID. Exact length of 78 characters. */
             puuid: string;
             /**
@@ -3873,6 +3743,8 @@ export interface components {
              * @description Summoner level associated with the summoner.
              */
             summonerLevel: number;
+            /** @description Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead. */
+            id?: string;
         };
         /** LeagueEntryDTO */
         "tft-league-v1.LeagueEntryDTO": {
@@ -3880,8 +3752,6 @@ export interface components {
             puuid?: string;
             /** @description Not included for the RANKED_TFT_TURBO queueType. */
             leagueId?: string;
-            /** @description Player's encrypted summonerId. */
-            summonerId: string;
             queueType: string;
             /**
              * @description Only included for the RANKED_TFT_TURBO queueType.
@@ -3962,14 +3832,13 @@ export interface components {
              * @description Second through eighth placement.
              */
             losses: number;
-            /** @description Player's encrypted summonerId. */
-            summonerId: string;
             /** @description Player's encrypted puuid. */
             puuid: string;
         };
         /** TopRatedLadderEntryDto */
         "tft-league-v1.TopRatedLadderEntryDto": {
-            summonerId: string;
+            /** @description Player's encrypted puuid. */
+            puuid: string;
             /**
              * @description (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
              * @enum {string}
@@ -4020,7 +3889,7 @@ export interface components {
             game_length: number;
             /** @description Game client version. */
             game_version: string;
-            /** @description Game variation key. Game variations documented in TFT static data. */
+            /** @description Deprecated. Game variation key. Game variations documented in TFT static data. */
             game_variation?: string;
             /** Format: int64 */
             mapId?: number;
@@ -4308,10 +4177,6 @@ export interface components {
          * @description represents a summoner
          */
         "tft-summoner-v1.SummonerDTO": {
-            /** @description Encrypted summoner ID. Max length 63 characters. */
-            id: string;
-            /** @description Encrypted account ID. Max length 56 characters. */
-            accountId: string;
             /** @description Encrypted PUUID. Exact length of 78 characters. */
             puuid: string;
             /**
@@ -4329,6 +4194,8 @@ export interface components {
              * @description Summoner level associated with the summoner.
              */
             summonerLevel: number;
+            /** @description Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead. */
+            id?: string;
         };
         /** TournamentCodeParametersV5 */
         "tournament-stub-v5.TournamentCodeParametersV5": {
@@ -4807,8 +4674,6 @@ export interface components {
         };
         /** LeaderboardDto */
         "val-console-ranked-v1.LeaderboardDto": {
-            /** @description The shard for the given leaderboard. */
-            shard: string;
             /** @description The act id for the given leaderboard. Act ids can be found using the val-content API. */
             actId: string;
             /**
@@ -4816,7 +4681,11 @@ export interface components {
              * @description The total number of players in the leaderboard.
              */
             totalPlayers: number;
+            query?: string;
+            /** @description The shard for the given leaderboard. */
+            shard: string;
             players: components["schemas"]["val-console-ranked-v1.PlayerDto"][];
+            tierDetails?: components["schemas"]["val-console-ranked-v1.TierDto"][];
         };
         /** PlayerDto */
         "val-console-ranked-v1.PlayerDto": {
@@ -4833,6 +4702,11 @@ export interface components {
             /** Format: int64 */
             numberOfWins: number;
         };
+        /**
+         * TierDto
+         * @description UNKNOWN TYPE.
+         */
+        "val-console-ranked-v1.TierDto": Record<string, never>;
         /** ContentDto */
         "val-content-v1.ContentDto": {
             version: string;
@@ -5147,6 +5021,7 @@ export interface components {
             numberOfWins: number;
             /** Format: int64 */
             competitiveTier?: number;
+            prefix?: string;
         };
         /** TierDetailDto */
         "val-ranked-v1.TierDetailDto": {
@@ -6912,105 +6787,6 @@ export interface operations {
             header?: never;
             path: {
                 encryptedPUUID: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["league-v4.LeagueEntryDTO"][];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "league-v4.getLeagueEntriesForSummoner": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                encryptedSummonerId: string;
             };
             cookie?: never;
         };
@@ -10002,105 +9778,6 @@ export interface operations {
             };
         };
     };
-    "summoner-v4.getByAccountId": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                encryptedAccountId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["summoner-v4.SummonerDTO"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     "summoner-v4.getByPUUID": {
         parameters: {
             query?: never;
@@ -10206,106 +9883,6 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["summoner-v4.SummonerDTO"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "summoner-v4.getBySummonerId": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Summoner ID */
-                encryptedSummonerId: string;
-            };
             cookie?: never;
         };
         requestBody?: never;
@@ -10516,105 +10093,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["tft-league-v1.LeagueListDTO"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "tft-league-v1.getLeagueEntriesForSummoner": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                summonerId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["tft-league-v1.LeagueEntryDTO"][];
                 };
             };
             /** @description Bad request */
@@ -11504,105 +10982,6 @@ export interface operations {
             };
         };
     };
-    "tft-summoner-v1.getByAccountId": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                encryptedAccountId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["tft-summoner-v1.SummonerDTO"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     "tft-summoner-v1.getByPUUID": {
         parameters: {
             query?: never;
@@ -11708,106 +11087,6 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["tft-summoner-v1.SummonerDTO"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "tft-summoner-v1.getBySummonerId": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Summoner ID */
-                encryptedSummonerId: string;
-            };
             cookie?: never;
         };
         requestBody?: never;

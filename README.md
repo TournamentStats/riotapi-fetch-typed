@@ -1,28 +1,70 @@
-# riot-games-fetch-typed
+# riotapi-fetch-typed
 
-A Module that adds basic typing information to a fetch function by wrapping it. Nothing more.
+Fetch the Riot Games API type-safe at all times thanks to OpenAPI specifications.
+
+## Features
+
+- Just a thin wrapper around fetch
+- (Almost) Fully Type-safe
+  - Regions (based on API Route)
+  - API Routes
+  - HTTP Methods
+  - Request Body
+  - Response Body
+  - Errors
+- Almost instant updates with zero maintenance, Updates on the API just need a regeneration of the src/types/openapi.d.ts file using `openapi-typescript`
+- supports all endpoints that are in the [OpenAPI specification](https://github.com/MingweiSamuel/riotapi-schema)
 
 ## Usage
 
-This module provides a utility function to create a fetch function. This uses a given fetch function which needs a BaseURL option (for example ofetch) and returns a wrapper around this function that enables the typed informations.
+### Without Error throwing
 
 ```typescript
-import { createRiotFetch } from 'riot-games-fetch-typed'
-import { ofetch } from 'ofetch'
+import { createRiotFetch } from "riotapi-fetch-typed";
 
-const riotFetch = createRiotFetch(ofetch, { apiKey: process.env.RIOT_API_KEY ?? '' })
+const riotFetch = createRiotFetch({ apiKey: process.env.RIOT_API_KEY! });
 
-// account is fully typed! API endpoint supports autofill (kinda, not really. In theory it could be possible but vscode doesn't autocomplete template literals)!
-const account = await riotFetch('europe', `/riot/account/v1/accounts/by-puuid/${puuid}`)
-const { gameName, gameTag } = account
+const puuid =
+  "Zz2sEt4n_mfS37AyXSqXnNw4eXDHHRfsYXD2FQb7jOLIrttOjtIe88cu_fKqwkPVgCSc_4slSNSrbg";
+// theoretically the route could support autofill, but current vscode typescript language doesn't support it, sadge. See below for issues
+const { response, data, error } = await riotFetch(
+  `/riot/account/v1/accounts/by-puuid/${puuid}`,
+  {
+    region: "europe", // type-safe
+  }
+);
 
-const ids = await riotFetch(
-	'EUW1',
-	'/lol/tournament/v5/codes',
-	{
-		method: 'post',
-	},
-)
+if (!error) {
+  const { gameName, tagLine } = data;
+}
+```
+
+### With Error throwing
+
+```typescript
+const riotFetch = createRiotFetch({
+  apiKey: process.env.RIOT_API_KEY!,
+  throwOnResponseError: true,
+});
+
+try {
+  const { response, data } = await riotFetch("/lol/tournament/v5/codes", {
+    region: "europe",
+    method: "post", // also type-safe
+    body: {
+      enoughPlayers: false,
+      mapType: "SUMMONERS_RIFT",
+      pickType: "TOURNAMENT_DRAFT",
+      spectatorType: "ALL",
+      teamSize: 5,
+    }, // body is also fully typed and annotated (if exists)
+  });
+  const tournamentCodes = data;
+} catch (e: unknown) {
+  if (e instanceof RiotError) {
+    console.error(e.statusCode, e.data);
+  }
+}
 ```
 
 ## Installation
@@ -39,15 +81,26 @@ $ yarn install riot-games-fetch-typed
 $ bun install riot-games-fetch-typed
 ```
 
+## Autocomplete related issues
+
+This library would be much more DX-friendly if typescript could autocomplete / give suggestions for template literal types. I think in theory
+this could be possible, but in reality I have no clue if the typescript eco-system would allow something like that.
+
+Issues/PRs i found that maybe relates to the autocompletion of template literals.
+
+- https://github.com/microsoft/TypeScript/issues/57902
+- https://github.com/microsoft/TypeScript/pull/59794
+- https://github.com/microsoft/TypeScript/issues/61217
+
 ## How it works
 
-This module uses the `openapi-typescript` module to generate typescript data from the Riot API OpenAPI Specification, that itself is generated from the officially documentation. Huge thanks to [Mingwei Samuel](https://github.com/MingweiSamuel) who provides them at https://github.com/MingweiSamuel/riotapi-schema. With these type information, typescripts crazy flexible typing system including template literals and type infering, we can infer the type from the request parameter.
+This module uses the `openapi-typescript` module to generate typescript data from the Riot API OpenAPI Specification, that itself is generated from the officially documentation. Huge thanks to [Mingwei Samuel](https://github.com/MingweiSamuel) who provides them at https://github.com/MingweiSamuel/riotapi-schema. With these type information, typescript's flexible typing system including template literals and type infering, we can infer the type of response and method and applicable regions from the fetch parameters.
 
-## Improvements
+## Contributing
 
-- Make the createRiotFetch function more flexible by also allowing a fetch function without baseURL functionality (for example the standard node fetch)
-- I guess this concepts can also be applied to other apis pretty easily. The createRiotFetch removes these flexibility.
+Feel free to contribute.
 
 ## This also exist
 
 - https://openapi-ts.dev/openapi-fetch/
+  - Much more feature complete, riotapi-fetch-typed is tailored for the Riot API and would require much more work to be as general as openapi-fetch

@@ -1,101 +1,292 @@
-import type { paths, components } from './types/openapi'
+import type { paths, components } from './types/openapi.d.js';
 
-export type RiotError = components['schemas']['Error']
+export * from './types/openapi.d.js';
 
-type _Region = 'americas' | 'asia' | 'europe' | 'esports'
-export type Region = _Region | Uppercase<_Region>
 
-type _Platform = 'br1' | 'eun1' | 'euw1' | 'jp1' | 'kr' | 'la1' | 'la2' | 'me1' | 'na1' | 'oc1' | 'ph2' | 'ru' | 'sg2' | 'th2' | 'tr1' | 'tw2' | 'vn2'
-export type Platform = _Platform | Uppercase<_Platform>
+/** Every possible API path, based on the OpenAPI document */
+type Paths = keyof paths;
 
-// Type util to convert path parameters to template strings recursivly
-// example: TemplatePathParams<'summoner/{summonerName}/ranked'> = 'summoner/${summonerName}/ranked'
-type TemplatePathParams<Path extends string> =
-Path extends `${infer Start}/{${string}}${infer End}`
-	? `${Start}/${string}${TemplatePathParams<End>}`
-	: Path
+/**
+ * Type util that replaces all occurences of curly brackets pairs in a string literal type to string placeholders,
+ * resulting in a template literal type. For that it recursively tests the string for curly bracket pairs.
+ *
+ * @example TemplatifyPath<'summoner/{summonerName}/ranked'> -> `summoner/${string}/ranked`
+ */
+type TemplatifyPath<Path extends string> =
+	Path extends `${infer Start}/{${string}}${infer End}`
+		? `${Start}/${string}${TemplatifyPath<End>}`
+		: Path;
 
-// every possible api path
-type Paths = keyof paths
-type AvailableMethods<Path extends Paths> = keyof paths[Path]
 
-// every possible api path, templatified
-type TemplatePaths = TemplatePathParams<keyof paths>
+/** Every possible API path, but templatified */
+type TemplatePaths = TemplatifyPath<Paths>;
 
-// Type util to get the corresponding api path from a string that extends from the specific template string
-// basically reverses the TemplatePathParams type
-type ResolveTemplatePath<TemplatePath extends string> = {
-	[P in keyof paths]: TemplatePath extends TemplatePathParams<P> ? P : never;
-}[keyof paths]
+/**
+ * Gives all API Paths that matches the templatified path. Basically the reverse operation of TemplatifyPath
+ *
+ * @example ResolveTemplatePath<`/riot/account/v1/accounts/by-puuid/${string}`>
+ * -> "/riot/account/v1/accounts/by-puuid/{puuid}"
+ */
+type ResolveTemplatePath<TemplatePath extends TemplatePaths> = {
+	[P in Paths]: TemplatePath extends TemplatifyPath<P> ? P : never;
+}[Paths];
 
-// gets the responses of a specific path and method by status code, if applicable
-type GetResponses<Path extends Paths, Method extends AvailableMethods<Path>> =
-	paths[Path][Method] extends { responses: infer Responses } ? Responses : never
 
-// gets the response json body of a specific path and method for a specific status code, if applicable
-type GetResponseBody<Path extends Paths, Method extends AvailableMethods<Path>, StatusCode extends number> =
-	GetResponses<Path, Method> extends Record<StatusCode, { content: { 'application/json': infer Body } }> ? Body : never
+export type HTTPMethods = 'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch' | 'trace';
 
-// gets the request json body of a specific path and method, if applicable
-type GetRequestBody<Path extends Paths, Method extends AvailableMethods<Path>> =
-	paths[Path][Method] extends { requestBody: { content: { 'application/json': infer Body } } } ? Body : never
+/**
+ * Get all available methods for a specific API path
+ */
+type Methods<Path extends Paths> = Exclude<keyof {
+	[K in keyof paths[Path] as paths[Path][K] extends undefined ? never : K]: paths[Path][K]
+}, 'parameters'>;
 
-export interface CreateFetchOptions {
-	apiKey: string
-	baseUrl?: (region: Region | Platform | string) => string
+/** Get all possible responses for a specific API path and method */
+type GetResponses<Path extends Paths, Method extends Methods<Path>> =
+	paths[Path][Method] extends { responses: infer Responses }
+		? Responses
+		: never;
+
+
+/** Get the response body for a specific API path, method and status code */
+type GetResponseBody<Path extends Paths, Method extends Methods<Path>, StatusCode extends number> =
+	GetResponses<Path, Method> extends Record<StatusCode, { content: { 'application/json': infer Body } }>
+		? Body
+		: never;
+
+/** Get the request body for a specific API path and method */
+type GetRequestBody<Path extends Paths, Method extends Methods<Path>> =
+	paths[Path][Method] extends { requestBody: { content: { 'application/json': infer Body } } }
+		? Body
+		: never;
+
+/** Regions for /riot/account/ endpoints */
+export type AccountRegion =  'americas' | 'asia' | 'europe';
+/** Regions for some lol and tft endpoints */
+export type LolRegion = 'br1' | 'eun1' | 'euw1' | 'jp1' | 'kr' | 'la1' | 'la2' | 'me1' | 'na1' | 'oc1' | 'ph2' | 'ru' | 'sg2' | 'th2' | 'tr1' | 'tw2' | 'vn2';
+/** Regions for lol and tft matches endpoints */
+export type MatchRegion = 'americas' | 'asia' | 'europe' | 'sea';
+/** Regions for /lor/ endpoints */
+export type LorRegion = 'americas' | 'europe' | 'sea';
+/** Regions for /val/ endpoints */
+export type ValorantRegion = 'ap' | 'br' | 'eu' | 'latam' | 'na' | 'esports' | 'kr';
+
+
+/** Get the relevant subdomains, depending on the endpoint */
+// i dont like eslint indenting here
+/* eslint-disable @stylistic/indent */
+type GetSubdomain<Path extends TemplatePaths> =
+	Path extends `/riot/account/${string}` ? AccountRegion :
+	Path extends `/lol/champion-mastery/${string}` ? LolRegion :
+	Path extends `/lol/platform/${string}` ? LolRegion :
+	Path extends `/lol/clash/${string}` ? LolRegion :
+	Path extends `/lol/league-exp/${string}` ? LolRegion :
+	Path extends `/lol/league/${string}` ? LolRegion :
+	Path extends `/lol/challenges/${string}` ? LolRegion :
+	Path extends `/lol/rso-match/${string}` ? MatchRegion :
+	Path extends `/lol/status/${string}` ? LolRegion :
+	Path extends `/lor/deck/${string}` ? LorRegion :
+	Path extends `/lor/inventory/${string}` ? LorRegion :
+	Path extends `/lor/match/${string}` ? LorRegion | 'apac' :
+	Path extends `/lor/ranked/${string}` ? LorRegion :
+	Path extends `/lor/status/${string}` ? LorRegion :
+	Path extends `/lol/match/${string}` ? MatchRegion :
+	Path extends `/lol/spectator/${string}` ? LolRegion :
+	Path extends `/fulfillment/${string}` ? LolRegion :
+	Path extends `/lol/summoner/${string}` ? LolRegion :
+	Path extends `/tft/league/${string}` ? LolRegion :
+	Path extends `/tft/match/${string}` ? MatchRegion | 'esports' | 'esportseu' :
+	Path extends `/tft/status/${string}` ? LolRegion :
+	Path extends `/tft/summoner/${string}` ? LolRegion :
+	// seems like only americas but not sure
+	Path extends `/lol/tournament-stub/${string}` ? 'americas' :
+	// don't know, can't see in api reference
+	Path extends `/lol/tournament/${string}` ? LolRegion | MatchRegion :
+	// The api docs do not include all regions for console, but for stability we will just include them
+	Path extends `/val/match/console/${string}` ? ValorantRegion :
+	Path extends `/val/console/ranked/${string}` ? ValorantRegion :
+	Path extends `/val/content/${string}` ? ValorantRegion :
+	Path extends `/val/match/${string}` ? ValorantRegion :
+	Path extends `/val/ranked/${string}` ? ValorantRegion :
+	Path extends `/val/status/${string}` ? Exclude<ValorantRegion, 'esports'>
+	: never;
+/* eslint-enable @stylistic/indent */
+
+/** Typical structure for a RiotError json object. */
+export type RiotErrorData = components['schemas']['Error'];
+
+/**
+ * Error Class for a 4xx/5xx response code in a fetch to the Riot API
+ */
+export class RiotError extends Error {
+	constructor(message: string, statusCode: number, data?: RiotErrorData) {
+		super(message);
+		this.statusCode = statusCode;
+		this.data = data;
+	}
+	statusCode: number;
+	data: RiotErrorData | undefined;
 }
 
-// Checks if an error is a RiotError
-export function isRiotError(error: unknown): error is RiotError {
-	return (error as RiotError).status !== undefined
+/**
+ * Type guard to check if an object is in the form of an riot error.
+ * The API may return a structure like that on error, but we cannot be sure.
+ *
+ * @param obj obj to be checked
+ * @returns true if obj has the form of RiotErroData
+ */
+function isRiotErrorData(obj: unknown): obj is RiotErrorData {
+	if (typeof obj !== 'object' || obj === null) return false;
+
+	const data = obj as RiotErrorData;
+
+	if (data.status !== undefined) {
+		if (typeof data.status !== 'object') {
+			return false;
+		}
+
+		if ('status_code' in data.status && typeof data.status.status_code !== 'number')		{
+			return false;
+		}
+
+		if ('message' in data.status && typeof data.status.message !== 'string')		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 
 /**
- * Creates a fetch function that automatically appends the api key to the headers
- * provides typing for the request and response bodies based on the passed request path
- * Path and Method are automatically inferred from parameters, ResponseCode defaults to 200
- * Function requires a fetch method that can work with a base url, for example ofetch https://github.com/unjs/ofetch
- * only really tested with ofetch
+ * This is a mess. I am sorry for this type abonimation.
  *
- * @param fetchMethod Fetch method, for example ofetch. This Function has to return a promise with the response body. For custom parameters wrap the fetch method and use the options parameter.
- * @param createFetchOptions Object containing the api key and optional base url function
- * @returns A function that can be called with a region, request path and optional options
+ * @template Path the Path of the API route
+ * @template ChosenMethod the Method that is chosen, has to be one of the available methods of the Path
+ * @template ThrowOnError Wether createRiotFetch is configured to throw on http errors or not
+ * @template error response.ok
+ */
+type RiotFetchReturn<
+	Path extends TemplatePaths,
+	ChosenMethod extends Methods<ResolveTemplatePath<Path>>,
+	ThrowOnError extends boolean,
+	error extends boolean,
+> = ThrowOnError extends true
+	? error extends false
+		? {
+			response: Response;
+			data: GetResponseBody<ResolveTemplatePath<Path>, ChosenMethod, 200>;
+		}
+		: never
+	: error extends false
+		? {
+			response: Response;
+			data: GetResponseBody<ResolveTemplatePath<Path>, ChosenMethod, 200>;
+			error: false;
+		}
+		: {
+			response: Response;
+			data:RiotErrorData | undefined;
+			error: true;
+		};
+
+/**
+ * Options for the createRiotFetch functions
+ */
+export interface CreateRiotFetchOptions<FetchOptions> {
+	/** The Api Key obtained from Riot Games */
+	apiKey: string
+	/** */
+	fetchFn?: (request: string, fetchOptions: FetchOptions) => Promise<Response>
+	/** Callback for dynamically creating the base url based on the given region */
+	baseUrl?: (region: string) => string,
+}
+
+interface BaseFetchOptions {
+	method?: HTTPMethods,
+	headers?: Headers,
+}
+
+/**
+ * Creates a new function that basically wraps the provided fetch function.
+ *
+ * @param createRiotFetchOptions Options for the createRiotFetch function
+ * @param defaultOptions Options that get passed to the fetch function by default
+ * @returns A fetch function to get fetch the Riot Games API type-safe
  */
 export function createRiotFetch<
-	O extends Record<string, unknown> | undefined,
-	Fetch extends <T>(
-		request: string,
-		options?: Partial<O> & { headers?: HeadersInit, baseURL?: string, body?: object },
-	) => Promise<T>,
+	FetchOptions extends BaseFetchOptions & Record<string, unknown>,
+	ThrowOnError extends boolean = false
 >(
-	fetchMethod: Fetch,
-	createFetchOptions: CreateFetchOptions
+	{
+		apiKey,
+		fetchFn = fetch,
+		baseUrl = (region: string) => `https://${region}.api.riotgames.com/`,
+		throwOnResponseError = false as ThrowOnError
+	}: CreateRiotFetchOptions<FetchOptions & { body?: BodyInit }> & {throwOnResponseError?: ThrowOnError},
+	defaultOptions: FetchOptions = {} as FetchOptions
 ) {
+	const headers = new Headers(defaultOptions.headers);
+	headers.append('X-Riot-Token', apiKey);
+	headers.append('Content-Type', 'application/json');
+	defaultOptions.headers = headers;
+
+	/**
+	 * A functions that can be used to fetch the Riot Games API with already defined defaults and type information
+	 * based on it's OpenAPI specification.
+	 *
+	 * @template Path The literal type of the path, inferred by `request`
+	 * @template UsableMethods All Methods that can be selected, used to autocomplete `method`
+	 * @template ChosenMethod The method
+	 * @param request The path of the resource requested. Gets merged using `URL`
+	 * @returns A promise for the return body, depending on Path, Method and Status Code
+	 * @throws { RiotError } if `throwOnResponseError = true` and !response.ok
+	 */
 	return async <
 		Path extends TemplatePaths,
-		Method extends AvailableMethods<ResolveTemplatePath<Path>> = 'get',
-		ResponseCode extends number = 200,
+		UsableMethods extends Methods<ResolveTemplatePath<Path>>,
+		ChosenMethod extends UsableMethods | undefined = 'get' extends UsableMethods ? 'get' : UsableMethods,
 	>(
-
 		request: Path,
-		options: O & {
-			region: Region | Platform | string,
-			headers?: HeadersInit, baseURL?: string
-		} & { body?: GetRequestBody<ResolveTemplatePath<Path>, Method> },
-	): Promise<GetResponseBody<ResolveTemplatePath<Path>, Method, ResponseCode>> => {
+		options: FetchOptions & {
+			region: GetSubdomain<ResolveTemplatePath<Path>>,
+			method?: UsableMethods,
+			body?: GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>
+		},
+	) => {
+		const baseURL = baseUrl(options.region);
+		const req = new URL(request, baseURL);
+		const response = await fetchFn(req.toString(), {
+			...defaultOptions,
+			...options,
+			body: JSON.stringify(options.body)
+		});
 
-		options = options ?? {}
-		const headers = new Headers(options?.headers)
-		headers.append('X-Riot-Token', createFetchOptions.apiKey)
-		options.headers = headers
+		if (!response.ok) {
+			const riotErrorData = await response.json()
+				.then(obj => isRiotErrorData(obj) ? obj : undefined)
+				.catch(() => undefined);
 
-		return fetchMethod<GetResponseBody<ResolveTemplatePath<Path>, Method, ResponseCode>>(
-			request,
-			{
-				baseURL: createFetchOptions.baseUrl?.(options.region) ?? `https://${options.region}.api.riotgames.com/`,
-				...options,
-			},
-		)
-	}
+
+			if (throwOnResponseError) {
+				throw new RiotError(
+					'Riot Games Fetch Error',
+					response.status,
+					riotErrorData
+				);
+			}
+
+			return {
+				response,
+				data: riotErrorData,
+				error: true,
+			} as RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, true>;
+		}
+
+		return {
+			response,
+			data: await response.json() as GetResponseBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>, 200>,
+			error: false,
+		} as RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>;
+	};
 }

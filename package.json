@@ -1,21 +1,24 @@
 {
-  "name": "riot-games-fetch-typed",
+  "name": "riotapi-fetch-typed",
   "type": "module",
-  "version": "2.2.1",
+  "version": "1.0.0-dev",
   "description": "Module that enables typing of Requests to the Riot Games API with ease.",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "generate-types": "openapi-typescript https://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.yml -o src/types/openapi.d.ts",
-    "build-no-gen": "tsup-node src/index.ts --dts --format esm,cjs",
+    "build-no-gen": "tsup",
     "build": "pnpm generate-types && pnpm build-no-gen",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "format": "eslint . --fix"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/TournamentStats/riot-games-fetch-typed.git"
   },
   "keywords": [
-    "riot-games",
+    "riot games",
     "api",
     "typescript",
     "fetch"
@@ -23,9 +26,18 @@
   "author": "TippTop",
   "license": "MIT",
   "devDependencies": {
-    "openapi-typescript": "^7.6.1",
-    "tsup": "^8.3.6",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "@eslint/js": "^9.30.1",
+    "@stylistic/eslint-plugin": "^5.1.0",
+    "@types/node": "^24.0.13",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "eslint": "^9.30.1",
+    "jiti": "^2.4.2",
+    "ofetch": "^1.4.1",
+    "openapi-typescript": "^7.8.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.3",
+    "type-fest": "^4.41.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0"
   }
 }
