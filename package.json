@@ -1,10 +1,10 @@
 {
   "name": "riotapi-fetch-typed",
   "type": "module",
-  "version": "1.0.0-dev",
+  "version": "1.0.1-dev",
   "description": "Fetch the Riot Games API with type safety, thanks to the OpenAPI specification.",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "generate-types": "openapi-typescript https://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.yml -o src/types/openapi.d.ts",
     "build-no-gen": "tsup",
