@@ -1,3 +1,6 @@
+<a href="https://github.com/TournamentStats/riotapi-fetch-typed/actions/workflows/test.yml"><img src="https://github.com/TournamentStats/riotapi-fetch-typed/actions/workflows/test.yml/badge.svg" alt="test workflow"></a>
+<a href="https://www.npmjs.com/package/riotapi-fetch-typed"><img src="https://img.shields.io/npm/v/riotapi-fetch-typed.svg" alt="npm registry"></a>
+
 # riotapi-fetch-typed
 
 Fetch the Riot Games API with type safety, thanks to the OpenAPI specification.
