@@ -164,7 +164,7 @@ function isRiotErrorData(obj: unknown): obj is RiotErrorData {
  * @template Path the Path of the API route
  * @template ChosenMethod the Method that is chosen, has to be one of the available methods of the Path
  * @template ThrowOnError Wether createRiotFetch is configured to throw on http errors or not
- * @template error response.ok
+ * @template error response.ok, used for type narrowing
  */
 type RiotFetchReturn<
 	Path extends TemplatePaths,
@@ -174,43 +174,61 @@ type RiotFetchReturn<
 > = ThrowOnError extends true
 	? error extends false
 		? {
+			/** The response object of the fetch */
 			response: Response;
+			/** Typed result of response.json() */
 			data: GetResponseBody<ResolveTemplatePath<Path>, ChosenMethod, 200>;
 		}
 		: never
 	: error extends false
 		? {
+			/** The response object of the fetch */
 			response: Response;
+			/** Typed result of response.json() or eventual error data */
 			data: GetResponseBody<ResolveTemplatePath<Path>, ChosenMethod, 200>;
+			/** Wether the fetch errored */
 			error: false;
 		}
 		: {
+			/** The response object of the fetch */
 			response: Response;
+			/** Typed result of response.json() or eventual error data */
 			data:RiotErrorData | undefined;
+			/** Wether the fetch errored */
 			error: true;
 		};
 
 /**
  * Options for the createRiotFetch functions
+ * @template FetchOptions Options the fetch function can accept
+ * @template ThrowOnError We set throwOnResponseError as a generic literal boolean, so that we can better type it
  */
-export interface CreateRiotFetchOptions<FetchOptions> {
+export interface CreateRiotFetchOptions<FetchOptions, ThrowOnError extends boolean> {
 	/** The Api Key obtained from Riot Games */
 	apiKey: string
-	/** */
+	/** fetch function that gets called (default: `undici.fetch`) */
 	fetchFn?: (request: string, fetchOptions: FetchOptions) => Promise<Response>
-	/** Callback for dynamically creating the base url based on the given region */
+	/** Function for dynamically creating the base url based on the given region. (default: standard riot api) */
 	baseUrl?: (region: string) => string,
+	/**
+	 * Wether on 4xx/5xx response status the fetch should error or set error = true and include eventual error data in data
+	 * @see RiotError
+	 */
+	throwOnResponseError?: ThrowOnError,
 }
 
+/**
+ * Basic Fetch Options that are essential for the functioning of createRiotFetch
+ */
 interface BaseFetchOptions {
 	method?: HTTPMethods,
 	headers?: Headers,
 }
 
 /**
- * Creates a new function that basically wraps the provided fetch function.
+ * Creates a new function that basically wraps the provided fetch function to provide type information.
  *
- * @param createRiotFetchOptions Options for the createRiotFetch function
+ * @param {CreateRiotFetchOptions} createRiotFetchOptions Options for the createRiotFetch function
  * @param defaultOptions Options that get passed to the fetch function by default
  * @returns A fetch function to get fetch the Riot Games API type-safe
  */
@@ -223,7 +241,7 @@ export function createRiotFetch<
 		fetchFn = fetch,
 		baseUrl = (region: string) => `https://${region}.api.riotgames.com/`,
 		throwOnResponseError = false as ThrowOnError
-	}: CreateRiotFetchOptions<FetchOptions & { body?: BodyInit }> & {throwOnResponseError?: ThrowOnError},
+	}: CreateRiotFetchOptions<FetchOptions & { body?: BodyInit }, ThrowOnError>,
 	defaultOptions: FetchOptions = {} as FetchOptions
 ) {
 	const headers = new Headers(defaultOptions.headers);
@@ -239,7 +257,7 @@ export function createRiotFetch<
 	 * @template UsableMethods All Methods that can be selected, used to autocomplete `method`
 	 * @template ChosenMethod The method
 	 * @param request The path of the resource requested. Gets merged using `URL`
-	 * @returns A promise for the return body, depending on Path, Method and Status Code
+	 * @returns Response Object, a promise for the return body, depending on Path, Method and Status Code and an error indicator
 	 * @throws { RiotError } if `throwOnResponseError = true` and !response.ok
 	 */
 	return async <
