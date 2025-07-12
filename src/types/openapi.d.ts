@@ -910,26 +910,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/fulfillment/v1/summoners/by-puuid/{rsoPUUID}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get a summoner by its RSO encrypted PUUID.
-         * @description Get a summoner by its RSO encrypted PUUID.
-         */
-        get: operations["summoner-v4.getByRSOPUUID"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}": {
         parameters: {
             query?: never;
@@ -9597,106 +9577,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["spectator-v5.FeaturedGames"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Data not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Method not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unsupported media type */
-            415: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Rate limit exceeded */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad gateway */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Service unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Gateway timeout */
-            504: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "summoner-v4.getByRSOPUUID": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Summoner ID */
-                rsoPUUID: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["summoner-v4.SummonerDTO"];
                 };
             };
             /** @description Bad request */
