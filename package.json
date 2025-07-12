@@ -43,6 +43,11 @@
     "typescript-eslint": "^8.36.0",
     "vitest": "^3.2.4"
   },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@<=2.0.2": "2.0.2"
+    }
+  },
   "files": [
     "dist/"
   ]
