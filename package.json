@@ -9,7 +9,7 @@
     "generate-types": "openapi-typescript https://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.yml -o src/types/openapi.d.ts",
     "build-no-gen": "tsup",
     "build": "pnpm generate-types && pnpm build-no-gen",
-    "test": "vitest run --config=vitest.config.mts --typecheck",
+    "test": "vitest run",
     "lint": "eslint .",
     "format": "eslint . --fix"
   },
