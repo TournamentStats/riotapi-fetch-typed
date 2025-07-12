@@ -1,5 +1,5 @@
 import { configDotenv } from 'dotenv';
-configDotenv();
+configDotenv({override: true});
 
 import type { components } from '../../src/types/openapi.js';
 import { assertType, expect, expectTypeOf, test } from 'vitest';
