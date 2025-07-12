@@ -1,6 +1,6 @@
 # riotapi-fetch-typed
 
-Fetch the Riot Games API type-safe at all times thanks to OpenAPI specifications.
+Fetch the Riot Games API with type safety, thanks to the OpenAPI specification.
 
 ## Features
 
