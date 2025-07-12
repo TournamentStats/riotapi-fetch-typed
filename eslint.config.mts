@@ -1,11 +1,15 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
-import path from 'node:path';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default tseslint.config(
 	{
-		ignores: ['dist/*', 'src/types/openapi.d.ts'],
+		ignores: ['dist/*', 'src/types/openapi.d.ts', './jest.config.mjs'],
 	},
 	{
 		plugins: {
@@ -24,7 +28,7 @@ export default tseslint.config(
 		languageOptions: {
 			parserOptions: {
 				projectService: true,
-				tsconfigRootDir: path.dirname(import.meta.url)
+				tsconfigRootDir: __dirname
 			}
 		}
 	}
