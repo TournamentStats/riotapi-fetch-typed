@@ -2,7 +2,7 @@
   "name": "riotapi-fetch-typed",
   "type": "module",
   "version": "1.0.0-dev",
-  "description": "Module that enables typing of Requests to the Riot Games API with ease.",
+  "description": "Fetch the Riot Games API with type safety, thanks to the OpenAPI specification.",
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
