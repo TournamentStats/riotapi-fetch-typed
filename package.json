@@ -1,7 +1,7 @@
 {
   "name": "riotapi-fetch-typed",
   "type": "module",
-  "version": "1.0.3-dev",
+  "version": "1.0.4-dev",
   "description": "Fetch the Riot Games API with type safety, thanks to the OpenAPI specification.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
