@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export default tseslint.config(
 	{
-		ignores: ['dist/*', 'src/types/openapi.d.ts', './jest.config.mjs'],
+		ignores: ['dist/*', 'src/types/openapi.d.ts'],
 	},
 	{
 		plugins: {

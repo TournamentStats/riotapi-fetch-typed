@@ -220,7 +220,7 @@ export interface CreateRiotFetchOptions<FetchOptions, ThrowOnError extends boole
 /**
  * Basic Fetch Options that are essential for the functioning of createRiotFetch
  */
-interface BaseFetchOptions {
+export interface BaseFetchOptions {
 	method?: HTTPMethods,
 	headers?: Headers,
 }
