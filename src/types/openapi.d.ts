@@ -830,6 +830,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/riftbound/content/v1/contents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get riftbound content
+         * @description Get riftbound content
+         */
+        get: operations["riftbound-content-v1.getContent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/lol/spectator/tft/v5/active-games/by-puuid/{encryptedPUUID}": {
         parameters: {
             query?: never;
@@ -1987,31 +2007,35 @@ export interface components {
         "lol-challenges-v1.Level": Record<string, never>;
         /** PlayerInfoDto */
         "lol-challenges-v1.PlayerInfoDto": {
-            challenges: components["schemas"]["lol-challenges-v1.ChallengeInfo"][];
-            preferences: components["schemas"]["lol-challenges-v1.PlayerClientPreferences"];
-            totalPoints: components["schemas"]["lol-challenges-v1.ChallengePoints"];
+            challenges: components["schemas"]["lol-challenges-v1.ChallengeInfoDto"][];
+            preferences: components["schemas"]["lol-challenges-v1.PlayerClientPreferencesDto"];
+            totalPoints: components["schemas"]["lol-challenges-v1.ChallengePointDto"];
             categoryPoints: {
-                [key: string]: components["schemas"]["lol-challenges-v1.ChallengePoints"];
+                [key: string]: components["schemas"]["lol-challenges-v1.ChallengePointDto"];
             };
         };
-        /** ChallengeInfo */
-        "lol-challenges-v1.ChallengeInfo": {
-            /** Format: int64 */
-            challengeId: number;
+        /** ChallengeInfoDto */
+        "lol-challenges-v1.ChallengeInfoDto": {
             /** Format: double */
             percentile: number;
-            level: string;
+            /** Format: int32 */
+            playersInLevel?: number;
+            /** Format: int64 */
+            achievedTime?: number;
             /** Format: double */
             value: number;
             /** Format: int64 */
-            achievedTime?: number;
-            /** Format: int64 */
+            challengeId: number;
+            /**
+             * @description (Legal values:  NONE,  IRON,  BRONZE,  SILVER,  GOLD,  PLATINUM,  DIAMOND,  MASTER,  GRANDMASTER,  CHALLENGER,  HIGHEST_NOT_LEADERBOARD_ONLY,  HIGHEST,  LOWEST)
+             * @enum {string}
+             */
+            level: "NONE" | "IRON" | "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "DIAMOND" | "MASTER" | "GRANDMASTER" | "CHALLENGER" | "HIGHEST_NOT_LEADERBOARD_ONLY" | "HIGHEST" | "LOWEST";
+            /** Format: int32 */
             position?: number;
-            /** Format: int64 */
-            playersInLevel?: number;
         };
-        /** PlayerClientPreferences */
-        "lol-challenges-v1.PlayerClientPreferences": {
+        /** PlayerClientPreferencesDto */
+        "lol-challenges-v1.PlayerClientPreferencesDto": {
             bannerAccent?: string;
             title?: string;
             challengeIds?: number[];
@@ -2019,8 +2043,8 @@ export interface components {
             /** Format: int32 */
             prestigeCrestBorderLevel?: number;
         };
-        /** ChallengePoints */
-        "lol-challenges-v1.ChallengePoints": {
+        /** ChallengePointsDto */
+        "lol-challenges-v1.ChallengePointDto": {
             level: string;
             /** Format: int64 */
             current: number;
@@ -3288,6 +3312,61 @@ export interface components {
         "match-v5.FeatDto": {
             /** Format: int32 */
             featState?: number;
+        };
+        /** RiftboundContentDTO */
+        "riftbound-content-v1.RiftboundContentDTO": {
+            /** @description Game Name */
+            game: string;
+            /** @description Content version */
+            version: string;
+            /** @description ISO Timestamp of content last update */
+            lastUpdated: string;
+            sets: components["schemas"]["riftbound-content-v1.SetDTO"][];
+        };
+        /** SetDTO */
+        "riftbound-content-v1.SetDTO": {
+            /** @description Set ID */
+            id: string;
+            /** @description Set Name */
+            name: string;
+            cards: components["schemas"]["riftbound-content-v1.CardDTO"][];
+        };
+        /** CardDTO */
+        "riftbound-content-v1.CardDTO": {
+            /** @description Card ID */
+            id: string;
+            /** Format: int64 */
+            collectorNumber: number;
+            set: string;
+            /** @description Card Name */
+            name: string;
+            description: string;
+            /** @description Card Type */
+            type: string;
+            rarity: string;
+            faction: string;
+            stats: components["schemas"]["riftbound-content-v1.CardStatsDTO"];
+            keywords: string[];
+            art: components["schemas"]["riftbound-content-v1.CardArtDTO"];
+            flavorText: string;
+            tags: string[];
+        };
+        /** CardStatsDTO */
+        "riftbound-content-v1.CardStatsDTO": {
+            /** Format: int64 */
+            energy: number;
+            /** Format: int64 */
+            might: number;
+            /** Format: int64 */
+            cost: number;
+            /** Format: int64 */
+            power: number;
+        };
+        /** CardArtDTO */
+        "riftbound-content-v1.CardArtDTO": {
+            thumbnailURL: string;
+            fullURL: string;
+            artist: string;
         };
         /** CurrentGameInfo */
         "spectator-tft-v5.CurrentGameInfo": {
@@ -9183,6 +9262,106 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["match-v5.TimelineDto"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Data not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Method not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unsupported media type */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad gateway */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Gateway timeout */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "riftbound-content-v1.getContent": {
+        parameters: {
+            query?: {
+                /** @description Defaults to en. Optional. Specifies the language and regional settings for the response. Use a locale code. During beta only en available. */
+                locale?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["riftbound-content-v1.RiftboundContentDTO"];
                 };
             };
             /** @description Bad request */
