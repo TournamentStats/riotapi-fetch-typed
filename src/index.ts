@@ -4,7 +4,7 @@ export * from './types/openapi.d.js';
 
 
 /** Every possible API path, based on the OpenAPI document */
-type Paths = keyof paths;
+export type Paths = keyof paths;
 
 /**
  * Type util that replaces all occurences of curly brackets pairs in a string literal type to string placeholders,
@@ -12,17 +12,17 @@ type Paths = keyof paths;
  *
  * @example TemplatifyPath<'summoner/{summonerName}/ranked'> -> `summoner/${string}/ranked`
  */
-type TemplatifyPath<Path extends string> =
+export type TemplatifyPath<Path extends string> =
 	Path extends `${infer Start}/{${string}}${infer End}`
 		? `${Start}/${string}${TemplatifyPath<End>}`
 		: Path;
 
 
 /** Every possible API path, but templatified */
-type TemplatePaths = TemplatifyPath<Paths>;
+export type TemplatePaths = TemplatifyPath<Paths>;
 
 /** Splits a Path by `/` into an array */
-type SplitPath<Path extends string> = Path extends `${infer Head}/${infer Tail}`
+export type SplitPath<Path extends string> = Path extends `${infer Head}/${infer Tail}`
 	? [Head, ...SplitPath<Tail>]
 	: [Path];
 
@@ -31,7 +31,7 @@ type SplitPath<Path extends string> = Path extends `${infer Head}/${infer Tail}`
  *
  * Type is true if both splitted paths have the same length and every segment of Concrete extends its corresponding segment Template
  * */
-type MatchSegments<Template extends string[], Concrete extends string[]> =
+export type MatchSegments<Template extends string[], Concrete extends string[]> =
   Template extends [infer TemplateSegment, ...infer TemplateRest]
   	? Concrete extends [infer ConcreteSegment, ...infer ConcreteRest]
   		? ConcreteSegment extends TemplateSegment
@@ -61,7 +61,7 @@ type MatchSegments<Template extends string[], Concrete extends string[]> =
  * @example ResolveTemplatePath<`/riot/account/v1/accounts/by-riot-id/gameName/gameTag`>
  * -> "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}"
  */
-type ResolveTemplatePath<Path extends TemplatePaths> = {
+export type ResolveTemplatePath<Path extends TemplatePaths> = {
 	[P in Paths]: MatchSegments<SplitPath<TemplatifyPath<P>>, SplitPath<Path>> extends true ? P : never
 }[Paths];
 
@@ -70,25 +70,25 @@ export type HTTPMethods = 'get' | 'put' | 'post' | 'delete' | 'options' | 'head'
 /**
  * Get all available methods for a specific API path
  */
-type Methods<Path extends Paths> = Exclude<keyof {
+export type Methods<Path extends Paths> = Exclude<keyof {
 	[K in keyof paths[Path] as paths[Path][K] extends undefined ? never : K]: paths[Path][K]
 }, 'parameters'>;
 
 /** Get all possible responses for a specific API path and method */
-type GetResponses<Path extends Paths, Method extends Methods<Path>> =
+export type GetResponses<Path extends Paths, Method extends Methods<Path>> =
 	paths[Path][Method] extends { responses: infer Responses }
 		? Responses
 		: never;
 
 
 /** Get the response body for a specific API path, method and status code */
-type GetResponseBody<Path extends Paths, Method extends Methods<Path>, StatusCode extends number> =
+export type GetResponseBody<Path extends Paths, Method extends Methods<Path>, StatusCode extends number> =
 	GetResponses<Path, Method> extends Record<StatusCode, { content?: { 'application/json': infer Body } }>
 		? Body
 		: never;
 
 
-type GetRequestBody<Path extends Paths, Method extends Methods<Path>> =
+export type GetRequestBody<Path extends Paths, Method extends Methods<Path>> =
   paths[Path][Method] extends { requestBody?: never }
   	? { body?: never }
   	: paths[Path][Method] extends { requestBody: { content: { 'application/json': infer U } } }
@@ -99,7 +99,7 @@ type GetRequestBody<Path extends Paths, Method extends Methods<Path>> =
 
 
 /** Get the query parameters for a specific API path and method */
-type GetQuery<Path extends Paths, Method extends Methods<Path>> =
+export type GetQuery<Path extends Paths, Method extends Methods<Path>> =
   Pick<paths[Path][Method]['parameters'], 'query'>;
 
 
@@ -118,7 +118,7 @@ export type ValorantRegion = 'ap' | 'br' | 'eu' | 'latam' | 'na' | 'esports' | '
 /** Get the relevant subdomains, depending on the endpoint */
 // i dont like eslint indenting here
 /* eslint-disable @stylistic/indent */
-type GetSubdomain<Path extends TemplatePaths> =
+export type GetSubdomain<Path extends TemplatePaths> =
 	Path extends `/riot/account/${string}` ? AccountRegion :
 	Path extends `/lol/champion-mastery/${string}` ? LolRegion :
 	Path extends `/lol/platform/${string}` ? LolRegion :
@@ -209,7 +209,7 @@ function isRiotErrorData(obj: unknown): obj is RiotErrorData {
  * @template ThrowOnError Wether createRiotFetch is configured to throw on http errors or not
  * @template error response.ok, used for type narrowing
  */
-type RiotFetchReturn<
+export type RiotFetchReturn<
 	Path extends TemplatePaths,
 	ChosenMethod extends Methods<ResolveTemplatePath<Path>>,
 	ThrowOnError extends boolean,
