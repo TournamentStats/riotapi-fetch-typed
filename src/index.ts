@@ -83,15 +83,25 @@ type GetResponses<Path extends Paths, Method extends Methods<Path>> =
 
 /** Get the response body for a specific API path, method and status code */
 type GetResponseBody<Path extends Paths, Method extends Methods<Path>, StatusCode extends number> =
-	GetResponses<Path, Method> extends Record<StatusCode, { content: { 'application/json': infer Body } }>
+	GetResponses<Path, Method> extends Record<StatusCode, { content?: { 'application/json': infer Body } }>
 		? Body
 		: never;
 
-/** Get the request body for a specific API path and method */
+
 type GetRequestBody<Path extends Paths, Method extends Methods<Path>> =
-	paths[Path][Method] extends { requestBody: { content: { 'application/json': infer Body } } }
-		? Body
-		: never;
+  paths[Path][Method] extends { requestBody?: never }
+  	? { body?: never }
+  	: paths[Path][Method] extends { requestBody: { content: { 'application/json': infer U } } }
+  		? { body: U }
+  		: paths[Path][Method] extends { requestBody?: { content: { 'application/json': infer U } } }
+  			? { body?: U }
+  			: unknown;
+
+
+/** Get the query parameters for a specific API path and method */
+type GetQuery<Path extends Paths, Method extends Methods<Path>> =
+  Pick<paths[Path][Method]['parameters'], 'query'>;
+
 
 /** Regions for /riot/account/ endpoints */
 export type AccountRegion =  'americas' | 'asia' | 'europe';
@@ -302,12 +312,18 @@ export function createRiotFetch<
 		options: FetchOptions & {
 			region: GetSubdomain<ResolveTemplatePath<Path>>,
 			method?: UsableMethods,
-			body?: GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>
-		},
+		}
+			& GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>
+			& GetQuery<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>,
 	) => {
 		const baseURL = baseUrl(options.region);
-		const req = new URL(request, baseURL);
-		const response = await fetchFn(req.toString(), {
+		let req = new URL(request, baseURL).toString();
+		if (options.query) {
+			const query = Object.entries(options.query).map(([key, value]) => [key, String(value)]);
+			req += new URLSearchParams(query).toString();
+		}
+
+		const response = await fetchFn(req, {
 			...defaultOptions,
 			...options,
 			body: JSON.stringify(options.body)
