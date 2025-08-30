@@ -12,14 +12,14 @@ export type Paths = keyof paths;
  *
  * @example TemplatifyPath<'summoner/{summonerName}/ranked'> -> `summoner/${string}/ranked`
  */
-export type TemplatifyPath<Path extends string> =
+export type TemplatifyPathRecursive<Path extends string> =
 	Path extends `${infer Start}/{${string}}${infer End}`
-		? `${Start}/${string}${TemplatifyPath<End>}`
+		? `${Start}/${string}${TemplatifyPathRecursive<End>}`
 		: Path;
 
 
 /** Every possible API path, but templatified */
-export type TemplatePaths = TemplatifyPath<Paths>;
+export type TemplatePaths = TemplatifyPathRecursive<Paths>;
 
 /** Splits a Path by `/` into an array */
 export type SplitPathRecursive<Path extends string> = Path extends `${infer Head}/${infer Tail}`
@@ -108,7 +108,7 @@ export type MatchSegments<
  * -> "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}"
  */
 export type ResolveTemplatePath<Path extends TemplatePaths> = {
-	[P in Paths]: MatchSegments<SplitPath<TemplatifyPath<P>>, SplitPath<Path>> extends true ? P : never
+	[P in Paths]: MatchSegments<SplitPath<TemplatifyPathRecursive<P>>, SplitPath<Path>> extends true ? P : never
 }[Paths];
 
 export type HTTPMethods = 'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch' | 'trace';
@@ -332,7 +332,10 @@ export function createRiotFetch<
 		throwOnResponseError = false as ThrowOnError
 	}: CreateRiotFetchOptions<FetchOptions & { body?: BodyInit }, ThrowOnError>,
 	defaultOptions: FetchOptions = {} as FetchOptions
-) {
+): <Path extends TemplatePaths, UsableMethods extends Methods<ResolveTemplatePath<Path>>, ChosenMethod extends UsableMethods | undefined = 'get' extends UsableMethods ? 'get' : UsableMethods>(request: Path, options: FetchOptions & {
+	region: GetSubdomain<ResolveTemplatePath<Path>>;
+	method?: UsableMethods;
+} & GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>> & GetQuery<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>) => Promise<RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, true> | RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>> {
 	const headers = new Headers(defaultOptions.headers);
 	headers.append('X-Riot-Token', apiKey);
 	headers.append('Content-Type', 'application/json');
@@ -361,7 +364,7 @@ export function createRiotFetch<
 		}
 			& GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>
 			& GetQuery<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>,
-	) => {
+	): Promise<RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, true> | RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>> => {
 		const baseURL = baseUrl(options.region);
 		let req = new URL(request, baseURL).toString();
 		if (options.query) {
