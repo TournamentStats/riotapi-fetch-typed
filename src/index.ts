@@ -22,9 +22,28 @@ export type TemplatifyPath<Path extends string> =
 export type TemplatePaths = TemplatifyPath<Paths>;
 
 /** Splits a Path by `/` into an array */
-export type SplitPath<Path extends string> = Path extends `${infer Head}/${infer Tail}`
-	? [Head, ...SplitPath<Tail>]
+export type SplitPathRecursive<Path extends string> = Path extends `${infer Head}/${infer Tail}`
+	? [Head, ...SplitPathRecursive<Tail>]
 	: [Path];
+
+export type SplitPath<Path extends string> =
+  Path extends `${infer A}/${infer B}/${infer C}/${infer D}/${infer E}/${infer F}/${infer G}/${infer H}/${infer I}`
+  	? [A, B, C, D, E, F, G, H, I]
+  	: Path extends `${infer A}/${infer B}/${infer C}/${infer D}/${infer E}/${infer F}/${infer G}/${infer H}`
+  		? [A, B, C, D, E, F, G, H]
+  		: Path extends `${infer A}/${infer B}/${infer C}/${infer D}/${infer E}/${infer F}/${infer G}`
+  			? [A, B, C, D, E, F, G]
+  			: Path extends `${infer A}/${infer B}/${infer C}/${infer D}/${infer E}/${infer F}`
+  				? [A, B, C, D, E, F]
+  				: Path extends `${infer A}/${infer B}/${infer C}/${infer D}/${infer E}`
+  					? [A, B, C, D, E]
+  					: Path extends `${infer A}/${infer B}/${infer C}/${infer D}`
+  						? [A, B, C, D]
+  						: Path extends `${infer A}/${infer B}/${infer C}`
+  							? [A, B, C]
+  							: Path extends `${infer A}/${infer B}`
+  								? [A, B]
+  								: [Path];
 
 /**
  * Compares two splitted paths.
