@@ -21,16 +21,49 @@ type TemplatifyPath<Path extends string> =
 /** Every possible API path, but templatified */
 type TemplatePaths = TemplatifyPath<Paths>;
 
+/** Splits a Path by `/` into an array */
+type SplitPath<Path extends string> = Path extends `${infer Head}/${infer Tail}`
+	? [Head, ...SplitPath<Tail>]
+	: [Path];
+
 /**
- * Gives all API Paths that matches the templatified path. Basically the reverse operation of TemplatifyPath
+ * Compares two splitted paths.
+ *
+ * Type is true if both splitted paths have the same length and every segment of Concrete extends its corresponding segment Template
+ * */
+type MatchSegments<Template extends string[], Concrete extends string[]> =
+  Template extends [infer TemplateSegment, ...infer TemplateRest]
+  	? Concrete extends [infer ConcreteSegment, ...infer ConcreteRest]
+  		? ConcreteSegment extends TemplateSegment
+  			? TemplateRest extends string[]
+  				? ConcreteRest extends string[]
+  					? MatchSegments<TemplateRest, ConcreteRest>
+  					: never
+  				: never
+  			: false
+  		: Concrete extends []
+  			? Template extends []
+  				? true
+  				: false
+  			: false
+  	: Template extends []
+  		? Concrete extends []
+  			? true
+  			: false
+  		: false;
+
+/**
+ * Gives all API Paths that matches the path. Basically the reverse operation of TemplatifyPath
  *
  * @example ResolveTemplatePath<`/riot/account/v1/accounts/by-puuid/${string}`>
  * -> "/riot/account/v1/accounts/by-puuid/{puuid}"
+ *
+ * @example ResolveTemplatePath<`/riot/account/v1/accounts/by-riot-id/gameName/gameTag`>
+ * -> "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}"
  */
-type ResolveTemplatePath<TemplatePath extends TemplatePaths> = {
-	[P in Paths]: TemplatePath extends TemplatifyPath<P> ? P : never;
+type ResolveTemplatePath<Path extends TemplatePaths> = {
+	[P in Paths]: MatchSegments<SplitPath<TemplatifyPath<P>>, SplitPath<Path>> extends true ? P : never
 }[Paths];
-
 
 export type HTTPMethods = 'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch' | 'trace';
 

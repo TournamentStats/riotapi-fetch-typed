@@ -48,7 +48,6 @@ test('Test fetch account', async () => {
  * Tests a 404 error on a (hopefully) not existing Riot ID. Configuration is noThrow
  */
 test('Test fetch account http error', async () => {
-	// puuid 1 will result in 404
 	const { response, error } = await rfetch('/riot/account/v1/accounts/by-riot-id/g45w9j6er8u9/EUW', {
 		region: 'europe'
 	});
