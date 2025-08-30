@@ -50,13 +50,13 @@ export type SplitPath<Path extends string> =
  *
  * Type is true if both splitted paths have the same length and every segment of Concrete extends its corresponding segment Template
  * */
-export type MatchSegments<Template extends string[], Concrete extends string[]> =
+export type MatchSegmentsRecursive<Template extends string[], Concrete extends string[]> =
   Template extends [infer TemplateSegment, ...infer TemplateRest]
   	? Concrete extends [infer ConcreteSegment, ...infer ConcreteRest]
   		? ConcreteSegment extends TemplateSegment
   			? TemplateRest extends string[]
   				? ConcreteRest extends string[]
-  					? MatchSegments<TemplateRest, ConcreteRest>
+  					? MatchSegmentsRecursive<TemplateRest, ConcreteRest>
   					: never
   				: never
   			: false
@@ -70,6 +70,33 @@ export type MatchSegments<Template extends string[], Concrete extends string[]> 
   			? true
   			: false
   		: false;
+
+export type MatchSegments<
+	T extends [string?, string?, string?, string?, string?, string?, string?, string?, string?],
+	C extends [string?, string?, string?, string?, string?, string?, string?, string?, string?]
+> =
+  T['length'] extends C['length'] ? (
+  	C[0] extends T[0] ?
+  		C[1] extends T[1] ?
+  			C[2] extends T[2] ?
+  				C[3] extends T[3] ?
+  					C[4] extends T[4] ?
+  						C[5] extends T[5] ?
+  							C[6] extends T[6] ?
+  								C[7] extends T[7] ?
+  									C[8] extends T[8] ?
+  										true :
+  										false :
+  									false :
+  								false :
+  							false :
+  						false :
+  					false :
+  				false :
+  			false :
+  		false
+  )
+  	: false;
 
 /**
  * Gives all API Paths that matches the path. Basically the reverse operation of TemplatifyPath
