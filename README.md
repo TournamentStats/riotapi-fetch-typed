@@ -13,6 +13,7 @@ Fetch the Riot Games API with type safety, thanks to the OpenAPI specification.
   - API Routes
   - HTTP Methods
   - Request Body
+  - Query Parameters
   - Response Body
   - Errors
 - Almost instant updates with zero maintenance, Updates on the API just need a regeneration of the src/types/openapi.d.ts file using `openapi-typescript`
