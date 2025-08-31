@@ -13,7 +13,7 @@ const validPuuid = process.env.PUUID;
 
 if (apiKey == undefined || validPuuid == undefined) {
 	console.error('Api Key or puuid not defined in env');
-	process.exit(1);
+	throw Error('Api Key or puuid not defined in env');
 }
 
 const rfetch = createRiotFetch({ apiKey });

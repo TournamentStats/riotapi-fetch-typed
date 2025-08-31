@@ -145,9 +145,7 @@ export type GetRequestBody<Path extends Paths, Method extends Methods<Path>> =
 
 
 /** Get the query parameters for a specific API path and method */
-export type GetQuery<Path extends Paths, Method extends Methods<Path>> =
-  Pick<paths[Path][Method]['parameters'], 'query'>;
-
+export type GetQuery<Path extends Paths, Method extends Methods<Path>> = Pick<paths[Path][Method]['parameters'], 'query'>;
 
 /** Regions for /riot/account/ endpoints */
 export type AccountRegion =  'americas' | 'asia' | 'europe';
@@ -332,10 +330,7 @@ export function createRiotFetch<
 		throwOnResponseError = false as ThrowOnError
 	}: CreateRiotFetchOptions<FetchOptions & { body?: BodyInit }, ThrowOnError>,
 	defaultOptions: FetchOptions = {} as FetchOptions
-): <Path extends TemplatePaths, UsableMethods extends Methods<ResolveTemplatePath<Path>>, ChosenMethod extends UsableMethods | undefined = 'get' extends UsableMethods ? 'get' : UsableMethods>(request: Path, options: FetchOptions & {
-	region: GetSubdomain<ResolveTemplatePath<Path>>;
-	method?: UsableMethods;
-} & GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>> & GetQuery<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>) => Promise<RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, true> | RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>> {
+) {
 	const headers = new Headers(defaultOptions.headers);
 	headers.append('X-Riot-Token', apiKey);
 	headers.append('Content-Type', 'application/json');
@@ -364,7 +359,10 @@ export function createRiotFetch<
 		}
 			& GetRequestBody<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>
 			& GetQuery<ResolveTemplatePath<Path>, Extract<ChosenMethod, HTTPMethods>>,
-	): Promise<RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, true> | RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>> => {
+	): Promise<
+	RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, true>
+	|	RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>
+	> => {
 		const baseURL = baseUrl(options.region);
 		let req = new URL(request, baseURL).toString();
 		if (options.query) {
