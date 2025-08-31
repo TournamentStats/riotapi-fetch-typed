@@ -404,3 +404,40 @@ export function createRiotFetch<
 		} as RiotFetchReturn<Path, Extract<ChosenMethod, HTTPMethods>, ThrowOnError, false>;
 	};
 }
+
+export const Queues = {
+	CUSTOM: 0,
+	HEXAKILL: 75,
+	URF: [76, 1900],
+	AR_URF: 900,
+	ARAM: {
+		BUTCHERS_BRIDGE: 100,
+		HOWLING_ABYSS: 450,
+		ALL: [100, 450]
+	},
+	ALL_RANDOM: 325,
+	BLIND: 430,
+	DRAFT: 400,
+	QUICKPLAY: 490,
+	RANKED_SOLO: 420,
+	RANKED_FLEX: 440,
+	CLASH: {
+		SUMMONERS_RIFT: 700,
+		HOWLING_ABYSS: 720,
+		ARAM: 720,
+		ALL: [700, 720]
+	},
+	COOP_VS_AI: {
+		INTRO: 870,
+		BEGINNER: 880,
+		INTERMEDIATE: 890,
+		ALL: [870, 880, 890],
+	},
+	DOOM_BOTS: 960,
+	ONE_FOR_ALL: 1020,
+	NEXUS_BLITZ: 1300,
+	SPELLBOOK: 1400,
+	ARENA: [1700, 1710],
+	SWARM: [1810, 1820, 1830, 1840],
+	TUTORIAL: [2000, 2010, 2020]
+} as const;
